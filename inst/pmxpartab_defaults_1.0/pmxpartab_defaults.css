@@ -1,0 +1,93 @@
+.table>thead>tr>th,
+.header th, thead, tbody, tr, table {
+    border: none;
+}
+table {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10pt;
+    border-collapse: collapse;
+    padding: 0px;
+    margin: 0px;
+}
+th, td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.5ex 1.5ex;
+    margin: 0px;
+}
+th {
+    vertical-align: bottom;
+}
+thead>tr:first-child>th {
+    border-top: 1.5pt solid black;
+}
+thead>tr:last-child>th {
+    border-bottom: 0.75pt solid black;
+}
+tbody>tr:last-child>td {
+    border-bottom: 1.5pt solid black;
+}
+thead>tr>th:first-child {
+    text-align: left;
+    padding-left: 0;
+}
+.paramsectionheading {
+    text-align: left;
+    font-style: italic;
+    padding-left: 0;
+    border-top: 0.75pt solid black;
+}
+.paramlabelnoindent {
+    text-align: left;
+    padding-left: 0em;
+}
+.paramlabelindent {
+    text-align: left;
+    padding-left: 1em;
+}
+
+.Rpmxpartable table {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10pt;
+    border-collapse: collapse;
+    padding: 0px;
+    margin: 0px;
+    border-top: 1.5pt solid black;
+    border-bottom: 1.5pt solid black;
+    border-left: 0;
+    border-right: 0;
+}
+.Rpmxpartable th, .Rpmxpartable td {
+    padding: 0.1ex 1ex;
+    text-align: center;
+    white-space:nowrap;
+    border: 0;
+}
+.Rpmxpartable th.rowlabelhead, .Rpmxpartable th.l2cl {
+    border-top: 1.5pt solid black;
+}
+.Rpmxpartable th {
+    padding-top: 0.5ex;
+    border-bottom: 0.75pt solid black;
+    vertical-align: center;
+    background-color: #fff;
+}
+.Rpmxpartable td {
+    vertical-align: top;
+}
+.Rpmxpartable tr:last-child td {
+    border-bottom: 1.5pt solid black;
+}
+.rowlabel {
+    text-align: left;
+}
+.tabletitle {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    font-weight: bold;
+}
+.tablefooter {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10pt;
+}
+

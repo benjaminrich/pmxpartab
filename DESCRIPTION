@@ -1,0 +1,12 @@
+Package: pmxpartab
+Type: Package
+Version: 0.1
+Date: 2021-04-14
+Title: Parameter Tables for PMx Analyses
+Authors@R: person("Benjamin", "Rich", role=c("aut", "cre"), email="mail@benjaminrich.net")
+Description: TBD
+License: GPL-3
+Imports: utils,table1,data.table
+Suggests: knitr
+VignetteBuilder: knitr
+RoxygenNote: 7.1.1
