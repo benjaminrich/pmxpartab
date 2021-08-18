@@ -5,6 +5,18 @@ parframe <- function(outputs, meta=outputs$meta) {
     param <- meta$parameters
     z <- data.table::rbindlist(param, fill=T)
 
+    if (is.null(outputs$th))       outputs$th       <- list()
+    if (is.null(outputs$om))       outputs$om       <- list()
+    if (is.null(outputs$sg))       outputs$sg       <- list()
+    if (is.null(outputs$se))       outputs$se       <- list()
+    if (is.null(outputs$se$th))    outputs$se$th    <- list()
+    if (is.null(outputs$se$om))    outputs$se$om    <- list()
+    if (is.null(outputs$se$sg))    outputs$se$sg    <- list()
+    if (is.null(outputs$fixed))    outputs$fixed    <- list()
+    if (is.null(outputs$fixed$th)) outputs$fixed$th <- list()
+    if (is.null(outputs$fixed$om)) outputs$fixed$om <- list()
+    if (is.null(outputs$fixed$sg)) outputs$fixed$sg <- list()
+
     outputs$all       <- with(outputs, c(th, om, sg))
     outputs$se$all    <- with(outputs$se, c(th, om, sg))
     outputs$fixed$all <- with(outputs$fixed, c(th, om, sg))
@@ -99,6 +111,10 @@ parframe <- function(outputs, meta=outputs$meta) {
         } else {
             # Not found
             next
+        }
+
+        if (is.null(fixed)) {
+            fixed <- FALSE
         }
 
         if (fixed || is.null(se) || is.na(se)) {
@@ -196,13 +212,13 @@ p <- function(x, digits=3, flag="", round.integers=FALSE){
     paste0(prefix, table1::signif_pad(x, digits=digits, round.integers=round.integers))
 }
 
-parameter.estimate.table.section <- function(label, ncolumns) {
+partab_section <- function(label, ncolumns) {
     paste0(c('<tr>',
-        paste0(sprintf('<td class="paramsectionheading">%s</td>', c(label, rep("", ncolumns-1))), collapse='\n'),
+        paste0(sprintf('<td class="partabsectionheading">%s</td>', c(label, rep("", ncolumns-1))), collapse='\n'),
         '</tr>'), collapse='\n')
 }
 
-parameter.estimate.table.row <- function(
+partab_row <- function(
     name,
     label          = NULL,
     units          = NULL,
@@ -225,6 +241,7 @@ parameter.estimate.table.row <- function(
     digits         = 3,
     indent         = TRUE,
     have.bootstrap = !is.null(boot.median),
+    columns        = c(est="Estimate", rse="RSE%", ci95="95% CI", shrinkage="Shrinkage"),
     ...) {
 
     # Check for superscript
@@ -288,7 +305,7 @@ parameter.estimate.table.row <- function(
     }
     all <- c(est=est, rse=rse, ci95=ci95, boot.median=boot.median, boot.ci95=boot.ci95, shrinkage=shrinkage)
     paste0(c('<tr>',
-        sprintf('<td class="%s">%s</td>', ifelse(isTRUE(indent), "paramlabelindent", "paramlabelnoindent"), label),
+        sprintf('<td class="%s">%s</td>', ifelse(isTRUE(indent), "partablabelindent", "partablabelnoindent"), label),
         paste0(sprintf('<td>%s</td>', all[names(columns)]), collapse='\n'),
         '</tr>'), collapse='\n')
 }
@@ -312,21 +329,21 @@ parameter.estimate.table.row <- function(
 #' 
 #' meta <- list(
 #'     parameters = list(
-#'         list(name="CL",   label="Clearance",    units="L/h", type="Structural"),
-#'         list(name="VC",   label="Volume",       units="L",   trans="exp", type="Structural"),
-#'         list(name="nCL",  label="On Clearance",              trans="SD (CV%)", type="IIV"),
-#'         list(name="nVC",  label="On Volume",                 type="IIV"),
-#'         list(name="ERRP", label="Proportional Error",        units="%", trans="%", type="RUV")))
+#'         list(name="CL",   label="Clearance",          units="L/h", type="Structural"),
+#'         list(name="VC",   label="Volume",             units="L",   type="Structural", trans="exp"),
+#'         list(name="nCL",  label="On Clearance",                    type="IIV",        trans="SD (CV%)"),
+#'         list(name="nVC",  label="On Volume",                       type="IIV"),
+#'         list(name="ERRP", label="Proportional Error", units="%",   type="RUV",        trans="%")))
 #' 
 #' parframe(outputs, meta)
 #' 
 #' pmxpartab(parframe(outputs, meta),
-#'     columns=c(est="Estimate", rse="RSE%", ci95="95%CI", shrinkage="Shrinkage"))
+#'     columns=c(est="Estimate", rse="RSE%", ci95="95% CI", shrinkage="Shrinkage"))
 #' @export
 pmxpartab <- function(
     parframe,
 
-    columns=c(est="Estimate", rse="RSE%", ci95="95%CI", shrinkage="Shrinkage"),
+    columns=c(est="Estimate", rse="RSE%", ci95="95% CI", shrinkage="Shrinkage"),
 
     sections = TRUE,
     section.labels = c(
@@ -364,11 +381,11 @@ pmxpartab <- function(
                     label <- type
                 }
 
-                tbody <- paste0(tbody, parameter.estimate.table.section(label, ncolumns=ncolumns), '\n')
+                tbody <- paste0(tbody, partab_section(label, ncolumns=ncolumns), '\n')
             }
         }
-        args <- c(parframe[i,], list(na=na, digits=digits, indent=sections))
-        tbody <- paste0(tbody, do.call(parameter.estimate.table.row, args), '\n')
+        args <- c(parframe[i,], list(na=na, digits=digits, indent=sections, columns=columns))
+        tbody <- paste0(tbody, do.call(partab_row, args), '\n')
     }
 
     table <- paste0('<table>\n<thead>\n', thead, '\n</thead>\n<tbody>\n', tbody, '\n</tbody>\n</table>\n')
@@ -443,8 +460,8 @@ knit_print.pmxpartab <- function(x, ...) {
 parse_parameter_description <- function(string) {
     # Returns a structured object representing a description of a parameter
     # (in this example just a list with some attributes; only the name is mandatory)
-    parameter_description <- function(name, label=NULL, units=NULL, trans=NULL, type=NULL) {
-        list(name=name, label=label, units=units, trans=trans, type=type)
+    parameter_description <- function(name, label=NULL, units=NULL, trans=NULL, type=NULL, ...) {
+        list(name=name, label=label, units=units, trans=trans, type=type, ...)
     }
 
     x <- str2lang(paste0("parameter_description(", string, ")"))
