@@ -1,13 +1,153 @@
-#' Get parameters in a data.frame
+#' Get metadata from outputs
+#' @keywords internal
+get_metadata <- function(outputs) {
+
+    # If metadata is stored with outputs, return it
+    if (!is.null(outputs$meta)) return(outputs$meta)
+
+    # Get all names recursively
+    all_leaf_names <- function(x) {
+        if (!is.list(x)) return(character(0))
+        ll <- sapply(x, is.list)
+        c(names(x)[!ll], as.character(unlist(lapply(x, all_leaf_names))))
+    }
+
+    nm <- unique(all_leaf_names(outputs))
+
+    list(parameters=lapply(nm, function(x) list(name=x)))
+}
+
+#' Create a `data.frame` of from outputs and metadata
 #'
+#' This can be viewed as the first step in creating a nice-looking HTML table
+#' of model parameters. It combines the "raw" model outputs with metadata and
+#' produces and `data.frame`, conceived as an intermediate between the raw
+#' outputs and formatted table, but may also be useful in its own right. The
+#' decoupling of raw outputs from the final table is viewed as essential for
+#' flexibility.
+#'
+#' @param outputs A `list` of outputs from fitting the model (see Details).
+#' @param meta A `list` of metadata (see Details).
+#'
+#' @details One of the key features of the approach taken in this package is
+#' that it decouples the "raw" outputs of the model from the presentation of
+#' results. A metadata description of the desired presentation of results is
+#' what links the two.  This allows, for example, parameters to be presented in
+#' a different order, or on a different scale, than they were specified in the
+#' model. Hence, it provides more flexibility and control over the presentation
+#' than other approaches.
+#'
+#' `outputs` is a named `list`, with the following elements:
+#' - `est`:       estimated values (ie, point estimates)
+#' - `se`:        standard errors
+#' - `fixed`:     designates parameters that were fixed rather than estimated
+#' - `shrinkage`: for random effects, the estimated percent shrinkage
+#'
+#' `est`, `se` and `fixed` have essentially the same structure. They can be
+#' either flat named lists, or more structured named lists containing the following elements:
+#'
+#' - `th`     : named list (or vector) of fixed effects
+#' - `om`     : named list (or vector) of individual-level random effects
+#' expressed as standard deviations
+#' - `om_cov` : individual-level random effects expressed as a
+#' variance-covariance matrix
+#' - `om_cor` : individual-level random effects expressed as a matrix of
+#' correlations (off-diagnal elements) and standard deviations (diagonal
+#' elements)
+#' - `sg`     : named list (or vector) of observation-level random effects
+#' expressed as standard deviations
+#'
+#' `meta` is a `list`. Each element of `meta` is a named (sub)list
+#' representing a parameter.  Each parameter is described by a series of
+#' attributes (not R `attributes`, but named list items). Of these, the only
+#' one that is required is `name`, which must match the name of the parameter
+#' used in `outputs` as it is used to make that association. The optional attributes include:
+#'
+#' - `label`:     A descriptive label.
+#' - `units`:     Units, if applicable.
+#' - `type`:      Parameters can be grouped into sections by type. The standard types are:
+#'   - `Structural`:      Structural model parameters
+#'   - `CovariateEffect`: Parameters that relate covariates to structural parameters
+#'   - `IIV`:             Inter-individual (ie, between-subject) variability
+#'   - `IOV`:             Inter-occasion variability
+#'   - `RUV`:             Residual unexplained variability
+#' - `trans`:     Parameters can be presented on a (back)transformed scale (eg,
+#' antilog). Importantly, transformation are also applied to standard errors
+#' (by "propagation of errors", also known as the delta method) to preserve
+#' (asymptotic) correctness, and to the endpoints of confidence intervals
+#' (note: this typically leads to non-symmetric intervals). Only a small set of
+#' transformations are currently recognized and supported, which include:
+#'   - `identity`:  no transformation
+#'   - `%`,         percent-scale
+#'   - `exp`:       antilog
+#'   - `ilogit`:    inverse-logit
+#'   - `CV%`:       intended specifically for IIV parameters, where the
+#'   associated structural parameter is log-normally distributed, transforms
+#'   the standard deviation to percent coefficient of variation by the formula
+#'   \eqn{100\times\sqrt(\exp(\omega^2) - 1)}
+#'   - `SD (CV%)`:  similar to the above, but the parameter remains on its original
+#'   scale (ie, standard deviation) with the percent coefficient of variation
+#'   displayed in parentheses next to it (does not affect standard errors or
+#'   confidence intervals).
+#'
+#' @return A `data.frame` with a row for each parameter, and the following columns:
+#'
+#' - `name`:      name of the parameter (`character`)
+#' - `fixed`:     fixed or estimated? (`logical`)
+#' - `est`:       estimated value (`numeric`)
+#' - `se`:        standard error (`numeric`)
+#' - `rse`:       percent relative standard error (`numeric`)
+#' - `lci95`:     lower bound of 95% confidence interval (`numeric`)
+#' - `uci95`:     upper bound of 95% confidence interval (`numeric`)
+#' - `pval`:      p-value for test of null hypothesis that value is zero (`numeric`)
+#' - `shrinkage`: percent shrinkage if applicable (`numeric`)
+#'
+#' Other attributes from `meta` will also be preserved as columns. The order of
+#' the rows is determined by the order of the parameters in `meta` (ther order
+#' in `outputs` is irrelevant).
+#'
+#' @seealso [pmxpartab]
+#'
+#' @examples
+#' outputs <- list(
+#'   est = list(
+#'     th = list(CL = 0.482334, VC = 0.0592686),
+#'     om = list(nCL = 0.315414, nVC = 0.536025),
+#'     sg = list(ERRP = 0.0508497)),
+#'   se = list(
+#'     th = list(CL = 0.0138646, VC = 0.00555121),
+#'     om = list(nCL = 0.0188891, nVC = 0.0900352),
+#'     sg = list(ERRP = 0.00182851)),
+#'   fixed = list(
+#'     th = list(CL = FALSE, VC = FALSE),
+#'     om = list(nCL = FALSE, nVC = FALSE),
+#'     sg = list(ERRP = FALSE)),
+#'   shrinkage = list(nCL = 9.54556, nVC = 47.8771))
+#' 
+#' meta <- list(
+#'   parameters = list(
+#'     list(name="CL", label="Clearance", units="L/h", type="Structural"),
+#'     list(name="VC", label="Volume", units="L", type="Structural", trans="exp"),
+#'     list(name="nCL", label="On Clearance", type="IIV", trans="SD (CV%)"),
+#'     list(name="nVC", label="On Volume", type="IIV"),
+#'     list(name="ERRP", label="Proportional Error", units="%", type="RUV", trans="%")))
+#' 
+#' pmxparframe(outputs, meta)
+#' @importFrom stats pnorm
 #' @export
-parframe <- function(outputs, meta=outputs$meta) {
+pmxparframe <- function(outputs, meta=get_metadata(outputs)) {
     param <- meta$parameters
     z <- data.table::rbindlist(param, fill=T)
 
-    if (is.null(outputs$th))       outputs$th       <- list()
-    if (is.null(outputs$om))       outputs$om       <- list()
-    if (is.null(outputs$sg))       outputs$sg       <- list()
+    # Legacy
+    if (!is.null(outputs$th))      outputs$est$th <- outputs$th
+    if (!is.null(outputs$sg))      outputs$est$sg <- outputs$sg
+    if (!is.null(outputs$om))      outputs$est$om <- outputs$om
+
+    if (is.null(outputs$est))      outputs$est      <- list()
+    if (is.null(outputs$est$th))   outputs$est$th   <- list()
+    if (is.null(outputs$est$om))   outputs$est$om   <- list()
+    if (is.null(outputs$est$sg))   outputs$est$sg   <- list()
     if (is.null(outputs$se))       outputs$se       <- list()
     if (is.null(outputs$se$th))    outputs$se$th    <- list()
     if (is.null(outputs$se$om))    outputs$se$om    <- list()
@@ -17,9 +157,18 @@ parframe <- function(outputs, meta=outputs$meta) {
     if (is.null(outputs$fixed$om)) outputs$fixed$om <- list()
     if (is.null(outputs$fixed$sg)) outputs$fixed$sg <- list()
 
-    outputs$all       <- with(outputs, c(th, om, sg))
-    outputs$se$all    <- with(outputs$se, c(th, om, sg))
-    outputs$fixed$all <- with(outputs$fixed, c(th, om, sg))
+    nm <- setdiff(names(outputs$est), c("th", "om", "om_cov", "om_cor", "sg", "all"))
+    outputs$est$all <- c(outputs$est$all, outputs$est[nm])
+
+    nm <- setdiff(names(outputs$se), c("th", "om", "om_cov", "om_cor", "sg", "all"))
+    outputs$se$all <- c(outputs$se$all, outputs$se[nm])
+
+    nm <- setdiff(names(outputs$fixed), c("th", "om", "om_cov", "om_cor", "sg", "all"))
+    outputs$fixed$all <- c(outputs$fixed$all, outputs$fixed[nm])
+
+    outputs$est$all   <- with(outputs$est, c(all, th, om, sg))
+    outputs$se$all    <- with(outputs$se, c(all, th, om, sg))
+    outputs$fixed$all <- with(outputs$fixed, c(all, th, om, sg))
 
     z$fixed     <- as.logical(NA)
     z$est       <- as.numeric(NA)
@@ -50,8 +199,8 @@ parframe <- function(outputs, meta=outputs$meta) {
         }
 
         # Check parameter type
-        if (name %in% names(outputs$all)) {
-            est <- outputs$all[[name]]
+        if (name %in% names(outputs$est$all)) {
+            est <- outputs$est$all[[name]]
             se <- outputs$se$all[[name]]
             fixed <- outputs$fixed$all[[name]]
             if (have.bootstrap && name %in% names(outputs$bootstrap$median)) {
@@ -62,11 +211,11 @@ parframe <- function(outputs, meta=outputs$meta) {
         } else if ((re <- regexec("^om(?:_cor)?\\((\\w+),(\\w+)\\)$", name, perl=T))[[1]][1] > 0) {
             m1 <- regmatches(name, re)[[1]][2]
             m2 <- regmatches(name, re)[[1]][3]
-            om_names <- names(outputs$om)
+            om_names <- names(outputs$est$om)
             a1 <- match(m1, om_names)
             a2 <- match(m2, om_names)
             if (!is.na(a1) && !is.na(a2)) {
-                est <- outputs$om_cor[a1,a2]
+                est <- outputs$est$om_cor[a1,a2]
                 se <- outputs$se$om_cor[a1,a2]
                 fixed <- outputs$fixed$om_cor[a1,a2]
                 if (fixed) {
@@ -74,7 +223,7 @@ parframe <- function(outputs, meta=outputs$meta) {
                 }
                 if (have.bootstrap) {
                     boot.re <- paste0("OMEGA\\D", max(a1, a2), "\\D", min(a1, a2), "($|\\D)")
-                    boot.name <- grep(boot.re, names(nmout$bootstrap$median), ignore.case=T, value=T)
+                    boot.name <- grep(boot.re, names(outputs$bootstrap$median), ignore.case=T, value=T)
                     if (length(boot.name) == 1) {
                         boot.median <- outputs$bootstrap$median[[boot.name]]
                         boot.lci <- outputs$bootstrap$ci95[[boot.name]][1]
@@ -88,8 +237,8 @@ parframe <- function(outputs, meta=outputs$meta) {
         } else if ((re <- regexec("^om_cov\\((\\w+),(\\w+)\\)$", name, perl=T))[[1]][1] > 0) {
             a1 <- regmatches(name, re)[[1]][2]
             a2 <- regmatches(name, re)[[1]][3]
-            if (a1 %in% dimnames(outputs$om_cov)[[1]] && a2 %in% dimnames(outputs$om_cov)[[2]]) {
-                est <- outputs$om_cov[a1,a2]
+            if (a1 %in% dimnames(outputs$est$om_cov)[[1]] && a2 %in% dimnames(outputs$est$om_cov)[[2]]) {
+                est <- outputs$est$om_cov[a1,a2]
                 se <- outputs$se$om_cov[a1,a2]
                 fixed <- outputs$fixed$om_cov[a1,a2]
                 if (fixed) {
@@ -97,7 +246,7 @@ parframe <- function(outputs, meta=outputs$meta) {
                 }
                 if (have.bootstrap) {
                     boot.re <- paste0("OMEGA\\D", max(a1, a2), "\\D", min(a1, a2), "($|\\D)")
-                    boot.name <- grep(boot.re, names(nmout$bootstrap$median), ignore.case=T, value=T)
+                    boot.name <- grep(boot.re, names(outputs$bootstrap$median), ignore.case=T, value=T)
                     if (length(boot.name) == 1) {
                         boot.median <- outputs$bootstrap$median[[boot.name]]
                         boot.lci <- outputs$bootstrap$ci95[[boot.name]][1]
@@ -195,11 +344,11 @@ parframe <- function(outputs, meta=outputs$meta) {
             z$boot.uci[i] <- boot.uci
         }
 
-        if (z$name[i] %in% names(outputs$shrinkage)) {
-            z$shrinkage[i] <- outputs$shrinkage[z$name[i]]
+        if (name %in% names(outputs$shrinkage)) {
+            z$shrinkage[i] <- outputs$shrinkage[[name]]
         }
     }
-    z <- subset(z, !is.na(est))
+    z <- z[!is.na(z$est),, drop=FALSE]
     as.data.frame(z)
 }
 
@@ -237,7 +386,7 @@ partab_row <- function(
     boot.lci       = NULL,
     boot.uci       = NULL,
     shrinkage      = NULL,
-    na             = "n/a",
+    na             = "-",
     digits         = 3,
     indent         = TRUE,
     have.bootstrap = !is.null(boot.median),
@@ -298,7 +447,7 @@ partab_row <- function(
 
     if (!is.null(shrinkage)) {
         if (is.na(shrinkage)) {
-            shrinkage <- ""
+            shrinkage <- na
         } else {
             shrinkage <- sprintf("%s%%", p(shrinkage, digits))
         }
@@ -310,42 +459,64 @@ partab_row <- function(
         '</tr>'), collapse='\n')
 }
 
-#' Generate a parameter estimates table in HTML
+#' Generate an formatted HTML table of parameter estimates
 #' 
+#' @param parframe A `data.frame` such as returned by [pmxparframe].
+#' @param columns A named `character` vector of columns to include in the table
+#' (and in what order). The names correspond to column names in `parframe` and
+#' the value to the column labels that appear in the formatted table.
+#' @param sections A `logical` indicating whether or not the table should be
+#' formatted into sections according the the `type` column of `parframe`.
+#' @param section.labels A named `character` vector. The names correspond to
+#' values in the `type` column of `parframe`, and the values to labels that
+#' appear in the formatted table.
+#' @param footnote A `character` vector of footnotes to place underneath the
+#' formatted table (may contain HTML codes).
+#' @param show.fixed.to.zero A `logical` indicating whether parameters that are
+#' fixed to zero should appear in the formatted table (by default, parameters
+#' that are formatted to values other than zero do appear in the table, but
+#' those that are fixed to zero are ignored).
+#' @param na A `character` string to use in the formatted table to indicate
+#' missing or non-applicable values.
+#' @param digits Number of significant digits to include in the formatted
+#' table.
+#' 
+#' @seealso [pmxparframe]
+#'
 #' @examples
 #' outputs <- list(
+#'   est = list(
 #'     th = list(CL = 0.482334, VC = 0.0592686),
 #'     om = list(nCL = 0.315414, nVC = 0.536025),
-#'     sg = list(ERRP = 0.0508497),
-#'     se = list(
-#'         th = list(CL = 0.0138646, VC = 0.00555121),
-#'         om = list(nCL = 0.0188891, nVC = 0.0900352),
-#'         sg = list(ERRP = 0.00182851)),
-#'     fixed = list(
-#'         th = list(CL = FALSE, VC = FALSE),
-#'         om = list(nCL = FALSE, nVC = FALSE),
-#'         sg = list(ERRP = FALSE)),
-#'     shrinkage = list(nCL = 9.54556, nVC = 47.8771))
+#'     sg = list(ERRP = 0.0508497)),
+#'   se = list(
+#'     th = list(CL = 0.0138646, VC = 0.00555121),
+#'     om = list(nCL = 0.0188891, nVC = 0.0900352),
+#'     sg = list(ERRP = 0.00182851)),
+#'   fixed = list(
+#'     th = list(CL = FALSE, VC = FALSE),
+#'     om = list(nCL = FALSE, nVC = FALSE),
+#'     sg = list(ERRP = FALSE)),
+#'   shrinkage = list(nCL = 9.54556, nVC = 47.8771))
 #' 
 #' meta <- list(
-#'     parameters = list(
-#'         list(name="CL",   label="Clearance",          units="L/h", type="Structural"),
-#'         list(name="VC",   label="Volume",             units="L",   type="Structural", trans="exp"),
-#'         list(name="nCL",  label="On Clearance",                    type="IIV",        trans="SD (CV%)"),
-#'         list(name="nVC",  label="On Volume",                       type="IIV"),
-#'         list(name="ERRP", label="Proportional Error", units="%",   type="RUV",        trans="%")))
+#'   parameters = list(
+#'     list(name="CL", label="Clearance", units="L/h", type="Structural"),
+#'     list(name="VC", label="Volume", units="L", type="Structural", trans="exp"),
+#'     list(name="nCL", label="On Clearance", type="IIV", trans="SD (CV%)"),
+#'     list(name="nVC", label="On Volume", type="IIV"),
+#'     list(name="ERRP", label="Proportional Error", units="%", type="RUV", trans="%")))
 #' 
-#' parframe(outputs, meta)
-#' 
-#' pmxpartab(parframe(outputs, meta),
-#'     columns=c(est="Estimate", rse="RSE%", ci95="95% CI", shrinkage="Shrinkage"))
+#' pmxpartab(pmxparframe(outputs, meta),
+#'     columns=c(est="Estimate", rse="RSE%", ci95="95% CI", shrinkage="Shrinkage"),
+#'     footnote="CI=confidence interval; RSE=relative standard error.")
 #' @export
 pmxpartab <- function(
     parframe,
 
     columns=c(est="Estimate", rse="RSE%", ci95="95% CI", shrinkage="Shrinkage"),
 
-    sections = TRUE,
+    sections = !is.null(parframe$type),
     section.labels = c(
         Structural      = "Typical Values",
         CovariateEffect = "Covariate Effects",
@@ -353,18 +524,22 @@ pmxpartab <- function(
         IIV             = "Between Subject Variability",
         IOV             = "Inter-Occasion Variability"),
 
-    show.fixed.to.zero=F,
-    na="n/a",
+    footnote=NULL,
+
+    show.fixed.to.zero=FALSE,
+    na="-",
     digits=3) {
 
     if (isFALSE(show.fixed.to.zero)) {
-        parframe <- subset(parframe, !(fixed & est==0))
+        parframe <- parframe[!(parframe$fixed & parframe$est==0),, drop=FALSE]
     }
 
     ncolumns <- length(columns) + 1
 
     thead <- paste0('<tr>\n<th rowspan="2">Parameter</th>\n',
         paste0(paste0('<th rowspan="2">', columns, '</th>'), collapse="\n"), '\n</tr>\n')
+
+    thead <- paste0('<thead>\n', thead, '\n</thead>\n')
 
 
     tbody <- ""
@@ -373,9 +548,7 @@ pmxpartab <- function(
             newsection <- (!is.null(parframe$type) && !is.na(parframe$type[i]) && (i == 1 || parframe$type[i] != parframe$type[i-1]))
             if (newsection) {
                 type <- parframe$type[i]
-                if (type %in% names(meta$labels)) {
-                    label <- meta$labels[[type]]
-                } else if (type %in% names(section.labels)) {
+                if (type %in% names(section.labels)) {
                     label <- section.labels[[type]]
                 } else {
                     label <- type
@@ -384,19 +557,31 @@ pmxpartab <- function(
                 tbody <- paste0(tbody, partab_section(label, ncolumns=ncolumns), '\n')
             }
         }
-        args <- c(parframe[i,], list(na=na, digits=digits, indent=sections, columns=columns))
+        args <- c(parframe[i,, drop=FALSE], list(na=na, digits=digits, indent=sections, columns=columns))
         tbody <- paste0(tbody, do.call(partab_row, args), '\n')
     }
+    tbody <- paste0('<tbody>\n', tbody, '\n</tbody>\n')
 
-    table <- paste0('<table>\n<thead>\n', thead, '\n</thead>\n<tbody>\n', tbody, '\n</tbody>\n</table>\n')
+    if (!is.null(footnote)) {
+        footnote <- sprintf('<p>%s</p>\n', footnote)
+        footnote <- paste0(footnote, collapse="\n")
+        tfoot <- sprintf('<tfoot><tr><td colspan="%d" class="partabfootnote">%s</td></tr></tfoot>\n', ncolumns, footnote)
+    } else {
+        tfoot <- ""
+    }
+
+    table <- paste0('<table>\n', thead, tbody, tfoot, '</table>\n')
     structure(table, class=c("pmxpartab", "html", "character"), html=TRUE)
 }
 
 
-#' Print \code{pmxpartab} object.
-#' @param x An object returned by \code{\link{pmxpartab}}.
-#' @param ... Further arguments passed on to other \code{print} methods.
-#' @return Returns \code{x} invisibly.
+#' Print `pmxpartab` object
+#'
+#' @param x An object returned by [pmxpartab].
+#' @param ... Further arguments passed on to other `print` methods.
+#'
+#' @return Returns `x` invisibly.
+#'
 #' @details In an interactive context, the rendered table will be displayed in
 #' a web browser. Otherwise, the HTML code will be printed as text.
 #' @export
@@ -416,9 +601,13 @@ print.pmxpartab <- function(x, ...) {
 }
 
 
-#' Method for printing in a \code{knitr} context.
-#' @param x An object returned by \code{\link{pmxpartab}}.
-#' @param ... Further arguments passed on to \code{knitr::knit_print}.
+#' Method for printing in a `knitr` context
+#'
+#' @param x An object returned by [pmxpartab].
+#' @param ... Further arguments passed on to [knitr::knit_print].
+#'
+#' @return A 'character` vector (see [knitr::knit_print]).
+#'
 #' @importFrom knitr knit_print
 #' @export
 knit_print.pmxpartab <- function(x, ...) {
@@ -439,6 +628,12 @@ knit_print.pmxpartab <- function(x, ...) {
 }
 
 #' Parse a parameter description string
+#'
+#' @param string A `character`, starting with a name, followed by an optional
+#' comma separated list of key-value pairs that can be parsed as R code. See
+#' Examples.
+#'
+#' @return A named `list`.
 #'
 #' @examples
 #' # Example 1: all elements present

@@ -2,7 +2,8 @@
 
 S3method(knit_print,pmxpartab)
 S3method(print,pmxpartab)
-export(parframe)
 export(parse_parameter_description)
+export(pmxparframe)
 export(pmxpartab)
 importFrom(knitr,knit_print)
+importFrom(stats,pnorm)

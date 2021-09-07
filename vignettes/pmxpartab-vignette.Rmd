@@ -1,0 +1,136 @@
+---
+title: "Introduction to `pmxpartab`"
+author: "Benjamin Rich"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    css: vignette.css
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Introduction to `pmxpartab`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{yaml}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='hide'}
+library(pmxpartab, quietly=TRUE)
+```
+
+## Introduction
+
+This R package produces nice looking parameter tables for pharmacometric modeling
+results with ease. It is completely agnostic to the modeling software that was
+used.
+
+## Usage
+
+The creation of the parameter table proceeds in 2 steps:
+
+1. Generate an intermediate `data.frame` from a list of outputs and metadata.
+2. Genreate an HTML table from the intermediate `data.frame`.
+
+For the first step, the imputs are:
+
+1. Model outputs (parameter estimates, standard errors, etc.)
+2. Metadata, describing the outputs (labels, units, transformations, etc.)
+
+To keep things generic, both the model outputs and metadata must be provided
+as R lists (it is a separate problem to extract the outputs from the modeling
+software into the required list format).
+
+For illustration, we will use a YAML description of the outputs and metadata,
+which can easily be read into R. First, the outputs:
+
+
+```{r}
+library(yaml)
+
+outputs <- yaml.load("
+est:
+  CL:   0.482334
+  VC:   0.0592686
+  nCL:  0.315414
+  nVC:  0.536025
+  ERRP: 0.0508497
+se:
+  CL:   0.0138646
+  VC:   0.0055512
+  nCL:  0.0188891
+  nVC:  0.0900352
+  ERRP: 0.0018285
+fixed:
+  CL:   no
+  VC:   no
+  nCL:  no
+  nVC:  no
+  ERRP: no
+shrinkage:
+  nCL:  9.54556
+  nVC:  47.8771
+")
+```
+
+We see that the outputs are split into separate sections: `est` for estimates,
+`se` for standard errors, `fixed` for indicating which parameters were fixed
+rather than estimated, `shrinkage` for shrinkage estimates.
+
+Now, the metadata:
+
+```{r}
+meta <- yaml.load("
+parameters:
+- name:  CL
+  label: 'Clearance'
+  units: 'L/h'
+  type:  Structural
+
+- name:  VC
+  label: 'Volume'
+  units: 'L'
+  type:  Structural
+  trans: 'exp'
+  
+- name:  nCL
+  label: 'On Clearance'
+  type:  IIV
+  trans: 'SD (CV%)'
+  
+- name:  nVC
+  label: 'On Volume'
+  type:  IIV
+  trans: 'SD (CV%)'
+  
+- name:  ERRP
+  label: 'Proportional Error'
+  units: '%'
+  type:  RUV
+  trans: '%'
+")
+```
+
+Here, the first important thing is the `name`, which must match the names of
+the parameters in the outputs. Then, we have some optional attributes: a
+descriptive `label`, the `units` if applicable, a transformation `trans`, and
+a `type`.
+
+
+Putting this all together, we can produce a `data.frame` like this:
+
+```{r}
+parframe <- pmxparframe(outputs, meta)
+parframe
+```
+
+Finally, our nicely formatted table looks like this:
+
+```{r}
+pmxpartab(parframe)
+```
+
+We can also do this in one shot, and add footnotes as well:
+
+```{r}
+pmxpartab(pmxparframe(outputs, meta), footnote="CI=confidence interval; RSE=relative standard error.")
+```
+

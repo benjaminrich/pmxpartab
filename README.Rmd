@@ -1,0 +1,134 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+#options(browser="C:/Program Files/Google/Chrome/Application/chrome.exe")
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# pmxpartab
+
+<!-- badges: start -->
+[![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
+<!-- badges: end -->
+
+This R package produces nice looking parameter tables for pharmacometric modeling
+results with ease. It is completely agnostic to the modeling software that was
+used.
+
+## Installation
+
+This package is not yet on CRAN. To install the latest development version directly from GitHub:
+
+``` r
+require(remotes)
+remotes::install_github("benjaminrich/pmxpartab")
+```
+
+## Usage
+
+The creation of the parameter table proceeds in 2 steps:
+
+1. Generate an intermediate `data.frame` from model outputs and metadata.
+2. Genreate a formatted HTML table from that intermediate `data.frame`.
+
+Both the model outputs and metadata are provided as R lists (it is a separate
+problem to extract the outputs from the modeling software into the required
+list format).
+
+Here is an example (in this example, YAML is used to give a clear and concise
+representation of outputs and metadata, but this is not required).
+
+```{r}
+library(yaml)
+
+outputs <- yaml.load("
+est:
+  CL:    0.482334
+  VC:    0.0592686
+  CL_WT: 0.750000
+  VC_WT: 1.00000
+  nCL:   0.315414
+  nVC:   0.536025
+  ERRP:  0.0508497
+se:
+  CL:    0.0138646
+  VC:    0.0055512
+  nCL:   0.0188891
+  nVC:   0.0900352
+  ERRP:  0.0018285
+fixed:
+  CL:    no
+  VC:    no
+  CL_WT: yes
+  VC_WT: yes
+  nCL:   no
+  nVC:   no
+  ERRP:  no
+shrinkage:
+  nCL:  9.54556
+  nVC:  47.8771
+")
+
+meta <- yaml.load("
+parameters:
+- name:  CL
+  label: 'Clearance'
+  units: 'L/h'
+  type:  Structural
+
+- name:  VC
+  label: 'Volume'
+  units: 'L'
+  type:  Structural
+  trans: 'exp'
+  
+- name:  CL_WT
+  label: 'Weight on Clearance'
+  type:  CovariateEffect
+
+- name:  VC_WT
+  label: 'Weight on Volume'
+  type:  CovariateEffect
+  
+- name:  nCL
+  label: 'On Clearance'
+  type:  IIV
+  trans: 'SD (CV%)'
+  
+- name:  nVC
+  label: 'On Volume'
+  type:  IIV
+  trans: 'SD (CV%)'
+  
+- name:  ERRP
+  label: 'Proportional Error'
+  units: '%'
+  type:  RUV
+  trans: '%'
+")
+
+parframe <- pmxparframe(outputs, meta)
+parframe
+
+```
+
+```{r, eval=F}
+pmxpartab(parframe)
+```
+
+Which produces:
+
+![Example result: parameter table](tools/readme/pmxpartab-example-output.png)
+
+For more information, read the 
+[vignette](https://benjaminrich.github.io/pmxpartab/vignettes/pmxpartab-vignette.html).
+
