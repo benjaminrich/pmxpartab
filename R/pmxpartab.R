@@ -177,7 +177,9 @@ pmxparframe <- function(outputs, meta=get_metadata(outputs)) {
     z$lci95     <- as.numeric(NA)
     z$uci95     <- as.numeric(NA)
     z$pval      <- as.numeric(NA)
-    z$shrinkage <- as.numeric(NA)
+    if (!is.null(outputs$shrinkage)) {
+        z$shrinkage <- as.numeric(NA)
+    }
 
     have.bootstrap <- !is.null(outputs$bootstrap)
     if (have.bootstrap) {
@@ -532,6 +534,10 @@ pmxpartab <- function(
 
     if (isFALSE(show.fixed.to.zero)) {
         parframe <- parframe[!(parframe$fixed & parframe$est==0),, drop=FALSE]
+    }
+
+    if (is.null(parframe$shrinkage)) {
+        columns <- columns[names(columns) != "shrinkage"]
     }
 
     ncolumns <- length(columns) + 1
