@@ -78,14 +78,7 @@
     text-align: left;
     padding-left: 1em;
 }
-.Rpmxpartab tfoot {
-    display: block;
-}
-.Rpmxpartab tfoot tr {
-    display: block;
-}
 .Rpmxpartab tfoot td.partabfootnote {
-    display: block;
     font-size: smaller;
     padding: 0px;
     margin: 0px;
@@ -94,3 +87,4 @@
 .Rpmxpartab tfoot td.partabfootnote p {
     margin: 1ex 0ex;
 }
+
