@@ -220,7 +220,7 @@ pmxparframe <- function(outputs, meta=get_metadata(outputs)) {
                 est <- outputs$est$om_cor[a1,a2]
                 se <- outputs$se$om_cor[a1,a2]
                 fixed <- outputs$fixed$om_cor[a1,a2]
-                if (fixed) {
+                if (isTRUE(fixed)) {
                     se <- NA
                 }
                 if (have.bootstrap) {
@@ -243,7 +243,7 @@ pmxparframe <- function(outputs, meta=get_metadata(outputs)) {
                 est <- outputs$est$om_cov[a1,a2]
                 se <- outputs$se$om_cov[a1,a2]
                 fixed <- outputs$fixed$om_cov[a1,a2]
-                if (fixed) {
+                if (isTRUE(fixed)) {
                     se <- NA
                 }
                 if (have.bootstrap) {
@@ -268,7 +268,7 @@ pmxparframe <- function(outputs, meta=get_metadata(outputs)) {
             fixed <- FALSE
         }
 
-        if (fixed || is.null(se) || is.na(se)) {
+        if (isTRUE(fixed) || is.null(se) || is.na(se)) {
             se <- NA
             rse <- NA
             ci95 <- c(NA, NA)
@@ -422,11 +422,11 @@ partab_row <- function(
 
     est <- paste0(est, superscript)
 
-    if (fixed) {
+    if (isTRUE(fixed)) {
         est <- sprintf('%s Fixed', est)
     }
 
-    if (is.na(se)) {
+    if (is.null(se) || is.na(se)) {
         se <- na
         rse <- na
         ci95 <- na
@@ -542,8 +542,8 @@ pmxpartab <- function(
 
     ncolumns <- length(columns) + 1
 
-    thead <- paste0('<tr>\n<th rowspan="2">Parameter</th>\n',
-        paste0(paste0('<th rowspan="2">', columns, '</th>'), collapse="\n"), '\n</tr>\n')
+    thead <- paste0('<tr>\n<th>Parameter</th>\n',
+        paste0(paste0('<th>', columns, '</th>'), collapse="\n"), '\n</tr>\n')
 
     thead <- paste0('<thead>\n', thead, '\n</thead>\n')
 
@@ -552,7 +552,7 @@ pmxpartab <- function(
     for (i in 1:nrow(parframe)) {
         if (isTRUE(sections)) {
             newsection <- (!is.null(parframe$type) && !is.na(parframe$type[i]) && (i == 1 || parframe$type[i] != parframe$type[i-1]))
-            if (newsection) {
+            if (isTRUE(newsection)) {
                 type <- parframe$type[i]
                 if (type %in% names(section.labels)) {
                     label <- section.labels[[type]]
