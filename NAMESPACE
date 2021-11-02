@@ -2,6 +2,7 @@
 
 S3method(knit_print,pmxpartab)
 S3method(print,pmxpartab)
+export(fpval)
 export(parse_parameter_description)
 export(pmxparframe)
 export(pmxpartab)

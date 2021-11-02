@@ -382,6 +382,7 @@ partab_row <- function(
     est            = NULL,
     se             = NULL,
     rse            = NULL,
+    pval           = NULL,
     lci95          = NULL,
     uci95          = NULL,
     boot.median    = NULL,
@@ -428,11 +429,32 @@ partab_row <- function(
 
     if (is.null(se) || is.na(se)) {
         se <- na
+    } else {
+        se <- p(se, digits)
+    }
+
+    if (is.null(rse) || is.na(rse)) {
         rse <- na
-        ci95 <- na
     } else {
         rse <- p(rse, digits)
+    }
+
+    if (is.null(lci95) || is.null(uci95)) {
+        ci95 <- na
+    } else {
+        if (is.na(lci95)) {
+            lci95 <- na
+        }
+        if (is.na(uci95)) {
+            uci95 <- na
+        }
         ci95 <- sprintf('%s &ndash; %s', p(lci95, digits), p(uci95, digits))
+    }
+
+    if (is.null(pval) || is.na(pval)) {
+        pval <- na
+    } else {
+        pval <- fpval(pval, digits=digits, html=TRUE)
     }
 
     if (have.bootstrap) {
@@ -454,7 +476,7 @@ partab_row <- function(
             shrinkage <- sprintf("%s%%", p(shrinkage, digits))
         }
     }
-    all <- c(est=est, rse=rse, ci95=ci95, boot.median=boot.median, boot.ci95=boot.ci95, shrinkage=shrinkage)
+    all <- c(est=est, se=se, rse=rse, pval=pval, ci95=ci95, boot.median=boot.median, boot.ci95=boot.ci95, shrinkage=shrinkage)
     paste0(c('<tr>',
         sprintf('<td class="%s">%s</td>', ifelse(isTRUE(indent), "partablabelindent", "partablabelnoindent"), label),
         paste0(sprintf('<td>%s</td>', all[names(columns)]), collapse='\n'),
@@ -486,6 +508,7 @@ partab_row <- function(
 #' @seealso [pmxparframe]
 #'
 #' @examples
+#' \donttest{
 #' outputs <- list(
 #'   est = list(
 #'     th = list(CL = 0.482334, VC = 0.0592686),
@@ -512,6 +535,22 @@ partab_row <- function(
 #' pmxpartab(pmxparframe(outputs, meta),
 #'     columns=c(est="Estimate", rse="RSE%", ci95="95% CI", shrinkage="Shrinkage"),
 #'     footnote="CI=confidence interval; RSE=relative standard error.")
+#' 
+#' 
+#' # An example using a Cox model, where we construct the parframe manually:
+#' library(survival)
+#' cph.fit <- coxph(Surv(time, status) ~ ph.ecog + age, data=lung)
+#' parframe <- with(summary(cph.fit), data.frame(
+#'     name  = c("ph.ecog", "age"),
+#'     label = c("ECOG performance score", "Age"),
+#'     est   = coefficients[,"exp(coef)"],
+#'     pval  = coefficients[,"Pr(>|z|)"],
+#'     lci95 = conf.int[,"lower .95"],
+#'     uci95 = conf.int[,"upper .95"]
+#' ))
+#' pmxpartab(parframe=parframe,
+#'     columns=c(est="HR", ci95="95% CI", pval="P-Value"))
+#' }
 #' @export
 pmxpartab <- function(
     parframe,
@@ -532,7 +571,7 @@ pmxpartab <- function(
     na="-",
     digits=3) {
 
-    if (isFALSE(show.fixed.to.zero)) {
+    if (isFALSE(show.fixed.to.zero) & !is.null(parframe$fixed)) {
         parframe <- parframe[!(parframe$fixed & parframe$est==0),, drop=FALSE]
     }
 
@@ -668,5 +707,54 @@ parse_parameter_description <- function(string) {
     x <- str2lang(paste0("parameter_description(", string, ")"))
     x[[2]] <- as.character(x[[2]]) # Interpret the first element (name) as a string even if not quoted
     eval(x)
+}
+
+
+#' Format p-values
+#'
+#' @param pval A numeric vector of p-values.
+#' @param digits The number of significant digits to retain.
+#' @param eps A numeric value. Under this threshold, rather than showing the
+#' p-value itself, show "< 1e-X" where X is the largest integer satisfying
+#' this relationship.
+#' @param alpha The significance level.
+#' @param star.symbol A character to display next to those p-values that are
+#' statistically significant (i.e., less then `alpha`).
+#' @param html A logical flag indicating whether to return HTML code or plain
+#' text.
+#' @param unicode.le A logical flag indicating whether to use the unicode
+#' symbol "&#x2264;" for "less-than-or-equal-to" (only applies when `html` is
+#' `FALSE`).
+#' @seealso [base::format.pval]
+#' @examples
+#' x <- c(1, 0.5, 0.05, 0.049, 0.01, 0.001, 0.0001, 0.00001)
+#' fpval(x, html=FALSE, unicode.le=FALSE)
+#' @export
+fpval <- function(pval, digits=3, eps=1e-3, alpha=0.05, star.symbol="*", html=FALSE, unicode.le=FALSE) {
+    .fpval.internal <- function(pval) {
+        if (pval >= eps) {
+            pval <- format.pval(pval, digits=digits, eps=eps)
+            if (substring(pval, 1, 1) == "<") {
+                if (html) {
+                    pval <- paste0("&lt; ", substring(pval, 2))
+                } else {
+                    pval <- paste0("< ", substring(pval, 2))
+                }
+            } else {
+                pval <- paste0("", pval)
+            }
+        } else {
+            if (html) {
+                pval <- paste0("&le; 10<sup>", ceiling(log10(pval)), "</sup>")
+            } else if (unicode.le) {
+                pval <- paste0("\U{2264} 1e", ceiling(log10(pval)))
+            } else {
+                pval <- paste0("<= 1e", ceiling(log10(pval)))
+            }
+        }
+        pval
+    }
+    star <- ifelse(pval < alpha, star.symbol, "")
+    paste0(Vectorize(.fpval.internal)(pval), star)
 }
 

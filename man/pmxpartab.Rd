@@ -50,6 +50,7 @@ table.}
 Generate an formatted HTML table of parameter estimates
 }
 \examples{
+\donttest{
 outputs <- list(
   est = list(
     th = list(CL = 0.482334, VC = 0.0592686),
@@ -76,6 +77,22 @@ meta <- list(
 pmxpartab(pmxparframe(outputs, meta),
     columns=c(est="Estimate", rse="RSE\%", ci95="95\% CI", shrinkage="Shrinkage"),
     footnote="CI=confidence interval; RSE=relative standard error.")
+
+
+# An example using a Cox model, where we construct the parframe manually:
+library(survival)
+cph.fit <- coxph(Surv(time, status) ~ ph.ecog + age, data=lung)
+parframe <- with(summary(cph.fit), data.frame(
+    name  = c("ph.ecog", "age"),
+    label = c("ECOG performance score", "Age"),
+    est   = coefficients[,"exp(coef)"],
+    pval  = coefficients[,"Pr(>|z|)"],
+    lci95 = conf.int[,"lower .95"],
+    uci95 = conf.int[,"upper .95"]
+))
+pmxpartab(parframe=parframe,
+    columns=c(est="HR", ci95="95\% CI", pval="P-Value"))
+}
 }
 \seealso{
 \link{pmxparframe}
