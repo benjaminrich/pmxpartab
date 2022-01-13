@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin Rich" />
 
-<meta name="date" content="2022-01-12" />
+<meta name="date" content="2022-01-13" />
 
 <title>Introduction to pmxpartab</title>
 
@@ -142,7 +142,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Introduction to <code>pmxpartab</code></h1>
 <h4 class="author">Benjamin Rich</h4>
-<h4 class="date">2022-01-12</h4>
+<h4 class="date">2022-01-13</h4>
 
 
 <div id="TOC">
@@ -395,7 +395,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>It is also possible to use the pipe syntax:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>outputs <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxparframe</span>(meta) <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxpartab</span>(<span class="at">footnote=</span>footnote)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>outputs <span class="sc">|&gt;</span> <span class="fu">pmxparframe</span>(meta) <span class="sc">|&gt;</span> <span class="fu">pmxpartab</span>(<span class="at">footnote=</span>footnote)</span></code></pre></div>
 <div class="Rpmxpartab"><table>
 <thead>
 <tr>
@@ -475,34 +475,35 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="random-effects-and-off-diagonal-elements" class="section level2">
 <h2>Random effects and off-diagonal elements</h2>
-<p>There is some debate on the best way to present the random effects from a mixed-effects model (ie, the parameter(s) that describe the (joint) distribution of the random effects, which are typically assumed to follow a multivariate normal distribution). Some modelers are used to seeing the variances and covariances, while others (such as this author) prefer the standard deviations and correlations. In any case, <code>pmxpartab</code> is agnostic to this choice, and gives freedom and flexibility in this respect.</p>
-<p>If following conventions, between-individual random effect parameters are contained in the <code>om</code> component of <code>est</code>, <code>se</code> and <code>fixed</code> (they can also be at the top level). Thus, one may have something like:</p>
+<p>There is some debate on the best way to present the random effects from a mixed-effects model (ie, the parameter(s) that describe the (joint) distribution of the random effects, which are typically assumed to follow a multivariate normal distribution). Some modelers are accustomed to seeing the variances and covariances, while others (such as me) prefer the standard deviations and correlations. In the standard log-normal case, diagonal elements are often presented in the form of their (geometric) coefficient of variation, which can be derived from the standard deviation <span class="math inline">\(ω\)</span> by <span class="math inline">\(\sqrt{e^{ω^2}-1}\)</span>, as is typically shown as a percentage. In any case, <code>pmxpartab</code> is agnostic to this choice, and gives freedom and flexibility in this respect.</p>
+<p>In one version (call it the <em>flat</em> version), all estimates are at the top level of the components <code>est</code>, <code>se</code> and <code>fixed</code>. Here is an example:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>outputs <span class="ot">&lt;-</span> <span class="fu">yaml.load</span>(<span class="st">&quot;</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">est:</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">  nCL:     0.0994859</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">  nVC:     0.2873220</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="st">  nCL_nVC: 0.0133415</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">  nCL:     3.95926E-01</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">  nVC:     1.42749E+00 </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="st">  nCL_nVC: 8.45393E-02</span></span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="st">se:</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">  nCL:  0.0188891</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="st">  nVC:  0.0900352</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span>)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">yaml.load</span>(<span class="st">&quot;</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="st">parameters:</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nCL&#39;</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;On Clearance&#39;</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nVC&#39;</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;On Volume&#39;</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nCL_nVC&#39;</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Covariance CL-Vc&#39;</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span>)</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>outputs <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxparframe</span>(meta) <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxpartab</span>()</span></code></pre></div>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">  nCL:     9.57069E-03</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="st">  nVC:     4.62152E-02 </span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="st">  nCL_nVC: 4.26648E-02</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">yaml.load</span>(<span class="st">&quot;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="st">parameters:</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nCL&#39;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;On CL&#39;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nVC&#39;</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;On Vc&#39;</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nCL_nVC&#39;</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Correlation CL-Vc&#39;</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span>)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>outputs <span class="sc">|&gt;</span> <span class="fu">pmxparframe</span>(meta) <span class="sc">|&gt;</span> <span class="fu">pmxpartab</span>()</span></code></pre></div>
 <div class="Rpmxpartab"><table>
 <thead>
 <tr>
@@ -521,73 +522,67 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td class="partabsectionheading"></td>
 </tr>
 <tr>
-<td class="partablabelindent">On Clearance</td>
-<td>0.0995</td>
-<td>19.0</td>
-<td>0.0625 – 0.137</td>
+<td class="partablabelindent">On CL</td>
+<td>0.396</td>
+<td>2.42</td>
+<td>0.377 – 0.415</td>
 </tr>
 <tr>
-<td class="partablabelindent">On Volume</td>
-<td>0.287</td>
-<td>31.3</td>
-<td>0.111 – 0.464</td>
+<td class="partablabelindent">On Vc</td>
+<td>1.43</td>
+<td>3.24</td>
+<td>1.34 – 1.52</td>
 </tr>
 <tr>
-<td class="partablabelindent">Covariance CL-Vc</td>
-<td>0.0133</td>
-<td>-</td>
-<td>-</td>
+<td class="partablabelindent">Correlation CL-Vc</td>
+<td>0.0845</td>
+<td>50.5</td>
+<td>0.000916 – 0.168</td>
 </tr>
 
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>om_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;nCL&quot;</span>, <span class="st">&quot;nVC&quot;</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>om_cov <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.0994859</span>, <span class="fl">0.0133415</span>, <span class="fl">0.0133415</span>, <span class="fl">0.287322</span>), <span class="dv">2</span>, <span class="dv">2</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(om_cov) <span class="ot">&lt;-</span> <span class="fu">list</span>(om_names, om_names)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>om_cov</span></code></pre></div>
-<pre><code>##           nCL       nVC
-## nCL 0.0994859 0.0133415
-## nVC 0.0133415 0.2873220</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(linpk)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>om_cov <span class="ot">&lt;-</span> linpk<span class="sc">::</span><span class="fu">LTmat</span>(<span class="fu">c</span>(<span class="fl">0.0994859</span>, <span class="fl">0.0133415</span>, <span class="fl">0.287322</span>))</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(om_cov) <span class="ot">&lt;-</span> <span class="fu">list</span>(om_names, om_names)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>om_cov</span></code></pre></div>
-<pre><code>##           nCL       nVC
-## nCL 0.0994859 0.0133415
-## nVC 0.0133415 0.2873220</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>om_cor <span class="ot">&lt;-</span> <span class="fu">cov2cor</span>(om_cov)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(om_cor) <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(om_cov))</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(om_cor) <span class="ot">&lt;-</span> <span class="fu">list</span>(om_names, om_names)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>om_cor</span></code></pre></div>
-<pre><code>##            nCL        nVC
-## nCL 0.31541386 0.07891135
-## nVC 0.07891135 0.53602425</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>outputs<span class="sc">$</span>est<span class="sc">$</span>om_cov <span class="ot">&lt;-</span> om_cov</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>outputs<span class="sc">$</span>est<span class="sc">$</span>om_cor <span class="ot">&lt;-</span> om_cor</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>outputs<span class="sc">$</span>est<span class="sc">$</span>om <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(om_cov))</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">yaml.load</span>(<span class="st">&quot;</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="st">parameters:</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nCL&#39;</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;On Clearance&#39;</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nVC&#39;</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;On Volume&#39;</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;om_cov(nCL,nVC)&#39;</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Covariance&#39;</span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;om_cor(nCL,nVC)&#39;</span></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Correlation&#39;</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span>)</span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>outputs <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxparframe</span>(meta) <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxpartab</span>()</span></code></pre></div>
+<p>In another version (call it the <em>structured</em> version), between-individual random effect parameters are contained in sub-components of <code>est</code>, <code>se</code> and <code>fixed</code>: - <code>om</code> contains the standard deviations as a named vector - <code>om_cov</code> contains the variance-covariance matrix - <code>om_cor</code> contains the correlation matrix, with standard deviations on the diagonal</p>
+<p>Here is an example:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>outputs <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">est =</span> <span class="fu">list</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">om     =</span> <span class="fu">c</span>(<span class="at">nCL=</span><span class="fl">3.95926E-01</span>, <span class="at">nVC=</span><span class="fl">1.42749E+00</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">om_cov =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">1.56758E-01</span>, <span class="fl">4.77799E-02</span>, <span class="fl">4.77799E-02</span>, <span class="fl">2.03772E+00</span>), <span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">om_cor =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">3.95926E-01</span>, <span class="fl">8.45393E-02</span>, <span class="fl">8.45393E-02</span>, <span class="fl">1.42749E+00</span>), <span class="dv">2</span>, <span class="dv">2</span>)),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="fu">list</span>(</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">om     =</span> <span class="fu">c</span>(<span class="at">nCL=</span><span class="fl">9.57069E-03</span>, <span class="at">nVC=</span><span class="fl">4.62152E-02</span>),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">om_cov =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">7.57858E-03</span>, <span class="fl">2.47183E-02</span>, <span class="fl">2.47183E-02</span>, <span class="fl">1.31943E-01</span>), <span class="dv">2</span>, <span class="dv">2</span>),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">om_cor =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">9.57069E-03</span>, <span class="fl">4.26648E-02</span>, <span class="fl">4.26648E-02</span>, <span class="fl">4.62152E-02</span>), <span class="dv">2</span>, <span class="dv">2</span>)))</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">yaml.load</span>(<span class="st">&quot;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="st">parameters:</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;om_cov(nCL,nCL)&#39;</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Variance log(CL)&#39;</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;om_cov(nVC,nVC)&#39;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Variance log(Vc)&#39;</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;om_cor(nCL,nCL)&#39;</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;SD log(CL)&#39;</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;om_cor(nVC,nVC)&#39;</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;SD log(Vc)&#39;</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;om_cov(nCL,nVC)&#39;</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Covariance log(CL)-log(Vc)&#39;</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;om_cor(nCL,nVC)&#39;</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Correlation log(CL)-log(Vc)&#39;</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span>)</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>outputs <span class="sc">|&gt;</span> <span class="fu">pmxparframe</span>(meta) <span class="sc">|&gt;</span> <span class="fu">pmxpartab</span>()</span></code></pre></div>
 <div class="Rpmxpartab"><table>
 <thead>
 <tr>
@@ -606,28 +601,40 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td class="partabsectionheading"></td>
 </tr>
 <tr>
-<td class="partablabelindent">On Clearance</td>
-<td>0.0995</td>
-<td>19.0</td>
-<td>0.0625 – 0.137</td>
+<td class="partablabelindent">Variance log(CL)</td>
+<td>0.157</td>
+<td>4.83</td>
+<td>0.142 – 0.172</td>
 </tr>
 <tr>
-<td class="partablabelindent">On Volume</td>
-<td>0.287</td>
-<td>31.3</td>
-<td>0.111 – 0.464</td>
+<td class="partablabelindent">Variance log(Vc)</td>
+<td>2.04</td>
+<td>6.48</td>
+<td>1.78 – 2.30</td>
 </tr>
 <tr>
-<td class="partablabelindent">Covariance</td>
-<td>0.0133</td>
-<td>-</td>
-<td>-</td>
+<td class="partablabelindent">SD log(CL)</td>
+<td>0.396</td>
+<td>2.42</td>
+<td>0.377 – 0.415</td>
 </tr>
 <tr>
-<td class="partablabelindent">Correlation</td>
-<td>0.0789</td>
-<td>-</td>
-<td>-</td>
+<td class="partablabelindent">SD log(Vc)</td>
+<td>1.43</td>
+<td>3.24</td>
+<td>1.34 – 1.52</td>
+</tr>
+<tr>
+<td class="partablabelindent">Covariance log(CL)-log(Vc)</td>
+<td>0.0478</td>
+<td>51.7</td>
+<td>-0.000668 – 0.0962</td>
+</tr>
+<tr>
+<td class="partablabelindent">Correlation log(CL)-log(Vc)</td>
+<td>0.0845</td>
+<td>50.5</td>
+<td>0.000916 – 0.168</td>
 </tr>
 
 </tbody>

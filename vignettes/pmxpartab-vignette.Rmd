@@ -151,84 +151,92 @@ outputs |> pmxparframe(meta) |> pmxpartab(footnote=footnote)
 There is some debate on the best way to present the random effects from a
 mixed-effects model (ie, the parameter(s) that describe the (joint)
 distribution of the random effects, which are typically assumed to follow a
-multivariate normal distribution).  Some modelers are used to seeing the
-variances and covariances, while others (such as this author) prefer the
-standard deviations and correlations. In any case, `pmxpartab` is agnostic to
-this choice, and gives freedom and flexibility in this respect.
+multivariate normal distribution).  Some modelers are accustomed to seeing the
+variances and covariances, while others (such as me) prefer the standard
+deviations and correlations.  In the standard log-normal case, diagonal
+elements are often presented in the form of their (geometric) coefficient of
+variation, which can be derived from the standard deviation $ω$ by
+$\sqrt{e^{ω^2}-1}$, as is typically shown as a percentage.  In any case, `pmxpartab`
+is agnostic to this choice, and gives freedom and flexibility in this respect.
 
-If following conventions, between-individual random effect parameters are
-contained in the `om` component of `est`, `se` and `fixed` (they can also be at
-the top level).  Thus, one may have something like:
+In one version (call it the _flat_ version), all estimates are at the top level
+of the components `est`, `se` and `fixed`. Here is an example:
 
 ```{r}
 outputs <- yaml.load("
 est:
-  nCL:     0.0994859
-  nVC:     0.2873220
-  nCL_nVC: 0.0133415
+  nCL:     3.95926E-01
+  nVC:     1.42749E+00 
+  nCL_nVC: 8.45393E-02
 se:
-  nCL:  0.0188891
-  nVC:  0.0900352
+  nCL:     9.57069E-03
+  nVC:     4.62152E-02 
+  nCL_nVC: 4.26648E-02
 ")
 
 meta <- yaml.load("
 parameters:
 - name:  'nCL'
-  label: 'On Clearance'
+  label: 'On CL'
   type:  IIV
 
 - name:  'nVC'
-  label: 'On Volume'
+  label: 'On Vc'
   type:  IIV
 
 - name:  'nCL_nVC'
-  label: 'Covariance CL-Vc'
+  label: 'Correlation CL-Vc'
   type:  IIV
 ")
 
 outputs |> pmxparframe(meta) |> pmxpartab()
 ```
 
+In another version (call it the _structured_ version), between-individual
+random effect parameters are contained in sub-components of `est`, `se` and
+`fixed`:
+  - `om` contains the standard deviations as a named vector
+  - `om_cov` contains the variance-covariance matrix
+  - `om_cor` contains the correlation matrix, with standard deviations on the diagonal
 
+Here is an example:
 
 ```{r}
 
-om_names <- c("nCL", "nVC")
-
-om_cov <- matrix(c(0.0994859, 0.0133415, 0.0133415, 0.287322), 2, 2)
-dimnames(om_cov) <- list(om_names, om_names)
-om_cov
-
-library(linpk)
-om_cov <- linpk::LTmat(c(0.0994859, 0.0133415, 0.287322))
-dimnames(om_cov) <- list(om_names, om_names)
-om_cov
-
-om_cor <- cov2cor(om_cov)
-diag(om_cor) <- sqrt(diag(om_cov))
-dimnames(om_cor) <- list(om_names, om_names)
-om_cor
-
-outputs$est$om_cov <- om_cov
-outputs$est$om_cor <- om_cor
-outputs$est$om <- sqrt(diag(om_cov))
+outputs <- list(
+    est = list(
+        om     = c(nCL=3.95926E-01, nVC=1.42749E+00),
+        om_cov = matrix(c(1.56758E-01, 4.77799E-02, 4.77799E-02, 2.03772E+00), 2, 2),
+        om_cor = matrix(c(3.95926E-01, 8.45393E-02, 8.45393E-02, 1.42749E+00), 2, 2)),
+    se = list(
+        om     = c(nCL=9.57069E-03, nVC=4.62152E-02),
+        om_cov = matrix(c(7.57858E-03, 2.47183E-02, 2.47183E-02, 1.31943E-01), 2, 2),
+        om_cor = matrix(c(9.57069E-03, 4.26648E-02, 4.26648E-02, 4.62152E-02), 2, 2)))
 
 meta <- yaml.load("
 parameters:
-- name:  'nCL'
-  label: 'On Clearance'
+- name:  'om_cov(nCL,nCL)'
+  label: 'Variance log(CL)'
   type:  IIV
 
-- name:  'nVC'
-  label: 'On Volume'
+- name:  'om_cov(nVC,nVC)'
+  label: 'Variance log(Vc)'
+  type:  IIV
+
+- name:  'om_cor(nCL,nCL)'
+  label: 'SD log(CL)'
+  type:  IIV
+
+- name:  'om_cor(nVC,nVC)'
+  label: 'SD log(Vc)'
   type:  IIV
 
 - name:  'om_cov(nCL,nVC)'
-  label: 'Covariance'
+  label: 'Covariance log(CL)-log(Vc)'
   type:  IIV
 
 - name:  'om_cor(nCL,nVC)'
-  label: 'Correlation'
+  label: 'Correlation log(CL)-log(Vc)'
   type:  IIV
 ")
 
