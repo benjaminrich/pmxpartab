@@ -439,14 +439,14 @@ partab_row <- function(
         rse <- p(rse, digits)
     }
 
-    if (is.null(lci95) || is.null(uci95)) {
+    if (is.null(lci95) || is.null(uci95) || is.na(lci95) || is.na(uci95)) {
         ci95 <- na
     } else {
-        if (is.na(lci95)) {
-            lci95 <- na
+        if (lci95 == -Inf) {
+            lci95 <- "-&infin;"
         }
-        if (is.na(uci95)) {
-            uci95 <- na
+        if (uci95 == Inf) {
+            uci95 <- "&infin;"
         }
         ci95 <- sprintf('%s &ndash; %s', p(lci95, digits), p(uci95, digits))
     }
