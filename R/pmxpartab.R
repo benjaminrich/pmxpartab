@@ -72,23 +72,26 @@ get_metadata <- function(outputs) {
 #'   - `IOV`:             Inter-occasion variability
 #'   - `RUV`:             Residual unexplained variability
 #' - `trans`:     Parameters can be presented on a (back)transformed scale (eg,
-#' antilog). Importantly, transformation are also applied to standard errors
-#' (by "propagation of errors", also known as the delta method) to preserve
-#' (asymptotic) correctness, and to the endpoints of confidence intervals
-#' (note: this typically leads to non-symmetric intervals). Only a small set of
-#' transformations are currently recognized and supported, which include:
+#'                antilog). Importantly, transformation are also applied to
+#'                standard errors (by "propagation of errors", also known as
+#'                the delta method) to preserve (asymptotic) correctness, and
+#'                to the endpoints of confidence intervals (note: this
+#'                typically leads to non-symmetric intervals). Only a small set
+#'                of transformations are currently recognized and supported,
+#'                which include:
 #'   - `identity`:  no transformation
 #'   - `%`,         percent-scale
 #'   - `exp`:       antilog
 #'   - `ilogit`:    inverse-logit
 #'   - `CV%`:       intended specifically for IIV parameters, where the
-#'   associated structural parameter is log-normally distributed, transforms
-#'   the standard deviation to percent coefficient of variation by the formula
-#'   \eqn{100\times\sqrt(\exp(\omega^2) - 1)}
+#'                  associated structural parameter is log-normally
+#'                  distributed, transforms the standard deviation \eqn{\omega}
+#'                  to percent coefficient of variation by the formula
+#'                  \eqn{100\times\sqrt{\exp(\omega^2)-1}}
 #'   - `SD (CV%)`:  similar to the above, but the parameter remains on its original
-#'   scale (ie, standard deviation) with the percent coefficient of variation
-#'   displayed in parentheses next to it (does not affect standard errors or
-#'   confidence intervals).
+#'                  scale (ie, standard deviation) with the percent coefficient
+#'                  of variation displayed in parentheses next to it (does not
+#'                  affect standard errors or confidence intervals).
 #'
 #' @return A `data.frame` with a row for each parameter, and the following columns:
 #'
@@ -211,12 +214,15 @@ pmxparframe <- function(outputs, meta=get_metadata(outputs)) {
                 boot.uci <- outputs$bootstrap$ci95[[name]][2]
             }
         } else if ((re <- regexec("^om(?:_cor)?\\((\\w+),(\\w+)\\)$", name, perl=T))[[1]][1] > 0) {
-            m1 <- regmatches(name, re)[[1]][2]
-            m2 <- regmatches(name, re)[[1]][3]
-            om_names <- names(outputs$est$om)
-            a1 <- match(m1, om_names)
-            a2 <- match(m2, om_names)
-            if (!is.na(a1) && !is.na(a2)) {
+            a1 <- regmatches(name, re)[[1]][2]
+            a2 <- regmatches(name, re)[[1]][3]
+            if (is.null(dimnames(outputs$est$om_cor)) && !is.null(names(outputs$se$om))) {
+                dimnames(outputs$est$om_cor) <- list(names(outputs$est$om), names(outputs$est$om))
+            }
+            if (is.null(dimnames(outputs$se$om_cor)) && !is.null(names(outputs$se$om))) {
+                dimnames(outputs$se$om_cor) <- list(names(outputs$se$om), names(outputs$se$om))
+            }
+            if (a1 %in% dimnames(outputs$est$om_cor)[[1]] && a2 %in% dimnames(outputs$est$om_cor)[[2]]) {
                 est <- outputs$est$om_cor[a1,a2]
                 se <- outputs$se$om_cor[a1,a2]
                 fixed <- outputs$fixed$om_cor[a1,a2]
@@ -239,6 +245,12 @@ pmxparframe <- function(outputs, meta=get_metadata(outputs)) {
         } else if ((re <- regexec("^om_cov\\((\\w+),(\\w+)\\)$", name, perl=T))[[1]][1] > 0) {
             a1 <- regmatches(name, re)[[1]][2]
             a2 <- regmatches(name, re)[[1]][3]
+            if (is.null(dimnames(outputs$est$om_cov))) {
+                dimnames(outputs$est$om_cov) <- list(names(outputs$est$om), names(outputs$est$om))
+            }
+            if (is.null(dimnames(outputs$se$om_cov)) && !is.null(names(outputs$se$om))) {
+                dimnames(outputs$se$om_cov) <- list(names(outputs$se$om), names(outputs$se$om))
+            }
             if (a1 %in% dimnames(outputs$est$om_cov)[[1]] && a2 %in% dimnames(outputs$est$om_cov)[[2]]) {
                 est <- outputs$est$om_cov[a1,a2]
                 se <- outputs$se$om_cov[a1,a2]
@@ -360,7 +372,10 @@ p <- function(x, digits=3, flag="", round.integers=FALSE){
         return(x)
     }
     prefix <- ifelse(flag=="+" & x > 0, "+", "")
-    paste0(prefix, table1::signif_pad(x, digits=digits, round.integers=round.integers))
+    x <- ifelse(!is.na(x) & x == Inf, "\U{221e}",
+         ifelse(!is.na(x) & x == -Inf, "-\U{221e}",
+        table1::signif_pad(x, digits=digits, round.integers=round.integers)))
+    paste0(prefix, x)
 }
 
 partab_section <- function(label, ncolumns) {
@@ -373,8 +388,8 @@ partab_row <- function(
     name,
     label          = NULL,
     units          = NULL,
-    type           = c("Structural", "CovariateEffect", "IIV", "IOV", "RUV", "Unspecified"),
-    trans          = c("identity", "%", "exp", "ilogit", "CV%", "SD (CV%)"),
+    type           = NULL,
+    trans          = NULL,
     expression     = NULL,
     relatedTo      = NULL,
     superscript    = NULL,
@@ -439,15 +454,11 @@ partab_row <- function(
         rse <- p(rse, digits)
     }
 
-    if (is.null(lci95) || is.null(uci95) || is.na(lci95) || is.na(uci95)) {
+    if (is.null(lci95) || is.null(uci95)) {
+        ci95 <- na
+    } else if (is.na(lci95) || is.na(uci95)) {
         ci95 <- na
     } else {
-        if (lci95 == -Inf) {
-            lci95 <- "-&infin;"
-        }
-        if (uci95 == Inf) {
-            uci95 <- "&infin;"
-        }
         ci95 <- sprintf('%s &ndash; %s', p(lci95, digits), p(uci95, digits))
     }
 

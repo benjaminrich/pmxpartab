@@ -86,24 +86,27 @@ used in \code{outputs} as it is used to make that association. The optional attr
 \item \code{RUV}:             Residual unexplained variability
 }
 \item \code{trans}:     Parameters can be presented on a (back)transformed scale (eg,
-antilog). Importantly, transformation are also applied to standard errors
-(by "propagation of errors", also known as the delta method) to preserve
-(asymptotic) correctness, and to the endpoints of confidence intervals
-(note: this typically leads to non-symmetric intervals). Only a small set of
-transformations are currently recognized and supported, which include:
+antilog). Importantly, transformation are also applied to
+standard errors (by "propagation of errors", also known as
+the delta method) to preserve (asymptotic) correctness, and
+to the endpoints of confidence intervals (note: this
+typically leads to non-symmetric intervals). Only a small set
+of transformations are currently recognized and supported,
+which include:
 \itemize{
 \item \code{identity}:  no transformation
 \item \verb{\%},         percent-scale
 \item \code{exp}:       antilog
 \item \code{ilogit}:    inverse-logit
 \item \verb{CV\%}:       intended specifically for IIV parameters, where the
-associated structural parameter is log-normally distributed, transforms
-the standard deviation to percent coefficient of variation by the formula
-\eqn{100\times\sqrt(\exp(\omega^2) - 1)}
+associated structural parameter is log-normally
+distributed, transforms the standard deviation \eqn{\omega}
+to percent coefficient of variation by the formula
+\eqn{100\times\sqrt{\exp(\omega^2)-1}}
 \item \verb{SD (CV\%)}:  similar to the above, but the parameter remains on its original
-scale (ie, standard deviation) with the percent coefficient of variation
-displayed in parentheses next to it (does not affect standard errors or
-confidence intervals).
+scale (ie, standard deviation) with the percent coefficient
+of variation displayed in parentheses next to it (does not
+affect standard errors or confidence intervals).
 }
 }
 }
