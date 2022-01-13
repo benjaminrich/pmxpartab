@@ -8,7 +8,7 @@ Description: Generate nicely formatted HTML tables to display estimation results
   pharmacometric models.
 License: GPL-3
 Imports: utils,table1,data.table,htmltools,knitr
-Suggests: yaml
+Suggests: rmarkdown,yaml,linpk,survival
 VignetteBuilder: knitr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
