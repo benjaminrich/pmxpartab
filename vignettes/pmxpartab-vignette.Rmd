@@ -131,6 +131,110 @@ pmxpartab(parframe)
 We can also do this in one shot, and add footnotes as well:
 
 ```{r}
-pmxpartab(pmxparframe(outputs, meta), footnote="CI=confidence interval; RSE=relative standard error.")
+footnote <- c(
+    "CI=confidence interval; RSE=relative standard error.",
+    "Source: run001")
+
+pmxpartab(pmxparframe(outputs, meta), footnote=footnote)
 ```
 
+It is also possible to  use the pipe syntax:
+
+```{r}
+outputs |> pmxparframe(meta) |> pmxpartab(footnote=footnote)
+```
+
+
+## Random effects and off-diagonal elements
+
+
+There is some debate on the best way to present the random effects from a
+mixed-effects model (ie, the parameter(s) that describe the (joint)
+distribution of the random effects, which are typically assumed to follow a
+multivariate normal distribution).  Some modelers are used to seeing the
+variances and covariances, while others (such as this author) prefer the
+standard deviations and correlations. In any case, `pmxpartab` is agnostic to
+this choice, and gives freedom and flexibility in this respect.
+
+If following conventions, between-individual random effect parameters are
+contained in the `om` component of `est`, `se` and `fixed` (they can also be at
+the top level).  Thus, one may have something like:
+
+```{r}
+outputs <- yaml.load("
+est:
+  nCL:     0.0994859
+  nVC:     0.2873220
+  nCL_nVC: 0.0133415
+se:
+  nCL:  0.0188891
+  nVC:  0.0900352
+")
+
+meta <- yaml.load("
+parameters:
+- name:  'nCL'
+  label: 'On Clearance'
+  type:  IIV
+
+- name:  'nVC'
+  label: 'On Volume'
+  type:  IIV
+
+- name:  'nCL_nVC'
+  label: 'Covariance CL-Vc'
+  type:  IIV
+")
+
+outputs |> pmxparframe(meta) |> pmxpartab()
+```
+
+
+
+```{r}
+
+om_names <- c("nCL", "nVC")
+
+om_cov <- matrix(c(0.0994859, 0.0133415, 0.0133415, 0.287322), 2, 2)
+dimnames(om_cov) <- list(om_names, om_names)
+om_cov
+
+library(linpk)
+om_cov <- linpk::LTmat(c(0.0994859, 0.0133415, 0.287322))
+dimnames(om_cov) <- list(om_names, om_names)
+om_cov
+
+om_cor <- cov2cor(om_cov)
+diag(om_cor) <- sqrt(diag(om_cov))
+dimnames(om_cor) <- list(om_names, om_names)
+om_cor
+
+outputs$est$om_cov <- om_cov
+outputs$est$om_cor <- om_cor
+outputs$est$om <- sqrt(diag(om_cov))
+
+meta <- yaml.load("
+parameters:
+- name:  'nCL'
+  label: 'On Clearance'
+  type:  IIV
+
+- name:  'nVC'
+  label: 'On Volume'
+  type:  IIV
+
+- name:  'om_cov(nCL,nVC)'
+  label: 'Covariance'
+  type:  IIV
+
+- name:  'om_cor(nCL,nVC)'
+  label: 'Correlation'
+  type:  IIV
+")
+
+outputs |> pmxparframe(meta) |> pmxpartab()
+```
+
+## Bootstrap results
+
+TBD

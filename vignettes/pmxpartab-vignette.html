@@ -12,12 +12,12 @@
 
 <meta name="author" content="Benjamin Rich" />
 
-<meta name="date" content="2021-09-07" />
+<meta name="date" content="2022-01-12" />
 
 <title>Introduction to pmxpartab</title>
 
 <script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
-<link href="data:text/css,%2ERpmxpartab%20thead%20%7B%0Aborder%2Dtop%3A%201%2E5pt%20solid%20black%3B%0Aborder%2Dbottom%3A%200%2E75pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20tbody%20%7B%0Aborder%2Dtop%3A%200%2E75pt%20solid%20black%3B%0Aborder%2Dbottom%3A%201%2E5pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20thead%3Etr%3Afirst%2Dchild%20%7B%0Aborder%2Dtop%3A%201%2E5pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20thead%3Etr%3Alast%2Dchild%20%7B%0Aborder%2Dbottom%3A%200%2E75pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20thead%3Etr%3Afirst%2Dchild%3Eth%20%7B%0Aborder%2Dtop%3A%201%2E5pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20thead%3Etr%3Alast%2Dchild%3Eth%20%7B%0Aborder%2Dbottom%3A%200%2E75pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20tbody%3Etr%3Afirst%2Dchild%3Etd%20%7B%0Aborder%2Dtop%3A%200%2E75pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20tbody%3Etr%3Alast%2Dchild%3Etd%20%7B%0Aborder%2Dbottom%3A%201%2E5pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20thead%3Etr%3Eth%3Afirst%2Dchild%20%7B%0Atext%2Dalign%3A%20left%3B%0Apadding%2Dleft%3A%200%3B%0A%7D%0A%2ERpmxpartab%20table%20%7B%0Afont%2Dfamily%3A%20%22Times%20New%20Roman%22%2C%20Times%2C%20serif%3B%0Afont%2Dsize%3A%2010pt%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0Apadding%3A%200px%3B%0Amargin%3A%200px%3B%0Aborder%2Dleft%3A%200%3B%0Aborder%2Dright%3A%200%3B%0A%7D%0A%2ERpmxpartab%20th%2C%20%2ERpmxpartab%20td%20%7B%0Apadding%3A%200%2E1ex%201ex%3B%0Atext%2Dalign%3A%20center%3B%0Awhite%2Dspace%3Anowrap%3B%0A%0A%7D%0A%2ERpmxpartab%20th%20%7B%0Apadding%2Dtop%3A%200%2E5ex%3B%0Aborder%2Dbottom%3A%200%2E75pt%20solid%20black%3B%0Avertical%2Dalign%3A%20center%3B%0Abackground%2Dcolor%3A%20%23fff%3B%0A%7D%0A%2ERpmxpartab%20td%20%7B%0Avertical%2Dalign%3A%20top%3B%0A%7D%0A%2ERpmxpartab%20%2Erowlabel%20%7B%0Atext%2Dalign%3A%20left%3B%0A%7D%0A%2ERpmxpartab%20%2Etabletitle%20%7B%0Afont%2Dfamily%3A%20%22Times%20New%20Roman%22%2C%20Times%2C%20serif%3B%0Afont%2Dsize%3A%2012pt%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0A%2ERpmxpartab%20%2Etablefooter%20%7B%0Afont%2Dfamily%3A%20%22Times%20New%20Roman%22%2C%20Times%2C%20serif%3B%0Afont%2Dsize%3A%2010pt%3B%0A%7D%0A%2ERpmxpartab%20td%2Epartabsectionheading%20%7B%0Atext%2Dalign%3A%20left%3B%0Afont%2Dstyle%3A%20italic%3B%0Apadding%2Dleft%3A%200%3B%0Aborder%2Dtop%3A%200%2E75pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20td%2Epartablabelnoindent%20%7B%0Atext%2Dalign%3A%20left%3B%0Apadding%2Dleft%3A%200em%3B%0A%7D%0A%2ERpmxpartab%20td%2Epartablabelindent%20%7B%0Atext%2Dalign%3A%20left%3B%0Apadding%2Dleft%3A%201em%3B%0A%7D%0A%2ERpmxpartab%20tfoot%20%7B%0Adisplay%3A%20block%3B%0A%7D%0A%2ERpmxpartab%20tfoot%20tr%20%7B%0Adisplay%3A%20block%3B%0A%7D%0A%2ERpmxpartab%20tfoot%20td%2Epartabfootnote%20%7B%0Adisplay%3A%20block%3B%0Afont%2Dsize%3A%20smaller%3B%0Apadding%3A%200px%3B%0Amargin%3A%200px%3B%0Atext%2Dalign%3A%20left%3B%0A%7D%0A%2ERpmxpartab%20tfoot%20td%2Epartabfootnote%20p%20%7B%0Amargin%3A%201ex%200ex%3B%0A%7D%0A" rel="stylesheet" />
+<link href="data:text/css,%2ERpmxpartab%20thead%20%7B%0Aborder%2Dtop%3A%201%2E5pt%20solid%20black%3B%0Aborder%2Dbottom%3A%200%2E75pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20tbody%20%7B%0Aborder%2Dtop%3A%200%2E75pt%20solid%20black%3B%0Aborder%2Dbottom%3A%201%2E5pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20thead%3Etr%3Afirst%2Dchild%20%7B%0Aborder%2Dtop%3A%201%2E5pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20thead%3Etr%3Alast%2Dchild%20%7B%0Aborder%2Dbottom%3A%200%2E75pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20thead%3Etr%3Afirst%2Dchild%3Eth%20%7B%0Aborder%2Dtop%3A%201%2E5pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20thead%3Etr%3Alast%2Dchild%3Eth%20%7B%0Aborder%2Dbottom%3A%200%2E75pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20tbody%3Etr%3Afirst%2Dchild%3Etd%20%7B%0Aborder%2Dtop%3A%200%2E75pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20tbody%3Etr%3Alast%2Dchild%3Etd%20%7B%0Aborder%2Dbottom%3A%201%2E5pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20thead%3Etr%3Eth%3Afirst%2Dchild%20%7B%0Atext%2Dalign%3A%20left%3B%0Apadding%2Dleft%3A%200%3B%0A%7D%0A%2ERpmxpartab%20table%20%7B%0Afont%2Dfamily%3A%20%22Times%20New%20Roman%22%2C%20Times%2C%20serif%3B%0Afont%2Dsize%3A%2010pt%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0Apadding%3A%200px%3B%0Amargin%3A%200px%3B%0Aborder%2Dleft%3A%200%3B%0Aborder%2Dright%3A%200%3B%0A%7D%0A%2ERpmxpartab%20th%2C%20%2ERpmxpartab%20td%20%7B%0Apadding%3A%200%2E1ex%201ex%3B%0Atext%2Dalign%3A%20center%3B%0Awhite%2Dspace%3Anowrap%3B%0A%0A%7D%0A%2ERpmxpartab%20th%20%7B%0Apadding%2Dtop%3A%200%2E5ex%3B%0Aborder%2Dbottom%3A%200%2E75pt%20solid%20black%3B%0Avertical%2Dalign%3A%20center%3B%0Abackground%2Dcolor%3A%20%23fff%3B%0A%7D%0A%2ERpmxpartab%20td%20%7B%0Avertical%2Dalign%3A%20top%3B%0A%7D%0A%2ERpmxpartab%20%2Erowlabel%20%7B%0Atext%2Dalign%3A%20left%3B%0A%7D%0A%2ERpmxpartab%20%2Etabletitle%20%7B%0Afont%2Dfamily%3A%20%22Times%20New%20Roman%22%2C%20Times%2C%20serif%3B%0Afont%2Dsize%3A%2012pt%3B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0A%2ERpmxpartab%20%2Etablefooter%20%7B%0Afont%2Dfamily%3A%20%22Times%20New%20Roman%22%2C%20Times%2C%20serif%3B%0Afont%2Dsize%3A%2010pt%3B%0A%7D%0A%2ERpmxpartab%20td%2Epartabsectionheading%20%7B%0Atext%2Dalign%3A%20left%3B%0Afont%2Dstyle%3A%20italic%3B%0Apadding%2Dleft%3A%200%3B%0Aborder%2Dtop%3A%200%2E75pt%20solid%20black%3B%0A%7D%0A%2ERpmxpartab%20td%2Epartablabelnoindent%20%7B%0Atext%2Dalign%3A%20left%3B%0Apadding%2Dleft%3A%200em%3B%0A%7D%0A%2ERpmxpartab%20td%2Epartablabelindent%20%7B%0Atext%2Dalign%3A%20left%3B%0Apadding%2Dleft%3A%201em%3B%0A%7D%0A%2ERpmxpartab%20tfoot%20td%2Epartabfootnote%20%7B%0Afont%2Dsize%3A%20smaller%3B%0Apadding%3A%200px%3B%0Amargin%3A%200px%3B%0Atext%2Dalign%3A%20left%3B%0A%7D%0A%2ERpmxpartab%20tfoot%20td%2Epartabfootnote%20p%20%7B%0Amargin%3A%201ex%200ex%3B%0A%7D%0A" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -142,13 +142,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Introduction to <code>pmxpartab</code></h1>
 <h4 class="author">Benjamin Rich</h4>
-<h4 class="date">2021-09-07</h4>
+<h4 class="date">2022-01-12</h4>
 
 
 <div id="TOC">
 <ul>
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#usage">Usage</a></li>
+<li><a href="#random-effects-and-off-diagonal-elements">Random effects and off-diagonal elements</a></li>
+<li><a href="#bootstrap-results">Bootstrap results</a></li>
 </ul>
 </div>
 
@@ -230,28 +232,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Putting this all together, we can produce a <code>data.frame</code> like this:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>parframe <span class="ot">&lt;-</span> <span class="fu">pmxparframe</span>(outputs, meta)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>parframe</span></code></pre></div>
-<pre><code>##   name              label units       type    trans fixed      est          se
-## 1   CL          Clearance   L/h Structural     &lt;NA&gt; FALSE 0.482334 0.013864600
-## 2   VC             Volume     L Structural      exp FALSE 1.061060 0.005890157
-## 3  nCL       On Clearance  &lt;NA&gt;        IIV SD (CV%) FALSE 0.315414 0.018889100
-## 4  nVC          On Volume  &lt;NA&gt;        IIV SD (CV%) FALSE 0.536025 0.090035200
-## 5 ERRP Proportional Error     %        RUV        % FALSE 5.084970 0.182850000
-##         rse     lci95     uci95         pval shrinkage
-## 1  2.874481 0.4551594 0.5095086 0.000000e+00        NA
-## 2  0.555120 1.0495781 1.0726679 0.000000e+00        NA
-## 3  5.988669 0.2783914 0.3524366 0.000000e+00   9.54556
-## 4 16.796829 0.3595560 0.7124940 2.624601e-09  47.87710
-## 5  3.595891 4.7265840 5.4433560 0.000000e+00        NA</code></pre>
+<pre><code>##   name              label units       type    trans fixed      est          se       rse     lci95     uci95         pval shrinkage
+## 1   CL          Clearance   L/h Structural     &lt;NA&gt; FALSE 0.482334 0.013864600  2.874481 0.4551594 0.5095086 0.000000e+00        NA
+## 2   VC             Volume     L Structural      exp FALSE 1.061060 0.005890157  0.555120 1.0495781 1.0726679 0.000000e+00        NA
+## 3  nCL       On Clearance  &lt;NA&gt;        IIV SD (CV%) FALSE 0.315414 0.018889100  5.988669 0.2783914 0.3524366 0.000000e+00   9.54556
+## 4  nVC          On Volume  &lt;NA&gt;        IIV SD (CV%) FALSE 0.536025 0.090035200 16.796829 0.3595560 0.7124940 2.624601e-09  47.87710
+## 5 ERRP Proportional Error     %        RUV        % FALSE 5.084970 0.182850000  3.595891 4.7265840 5.4433560 0.000000e+00        NA</code></pre>
 <p>Finally, our nicely formatted table looks like this:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pmxpartab</span>(parframe)</span></code></pre></div>
 <div class="Rpmxpartab"><table>
 <thead>
 <tr>
-<th rowspan="2">Parameter</th>
-<th rowspan="2">Estimate</th>
-<th rowspan="2">RSE%</th>
-<th rowspan="2">95% CI</th>
-<th rowspan="2">Shrinkage</th>
+<th>Parameter</th>
+<th>Estimate</th>
+<th>RSE%</th>
+<th>95% CI</th>
+<th>Shrinkage</th>
 </tr>
 
 </thead>
@@ -317,15 +313,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </table>
 </div>
 <p>We can also do this in one shot, and add footnotes as well:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pmxpartab</span>(<span class="fu">pmxparframe</span>(outputs, meta), <span class="at">footnote=</span><span class="st">&quot;CI=confidence interval; RSE=relative standard error.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>footnote <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;CI=confidence interval; RSE=relative standard error.&quot;</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Source: run001&quot;</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">pmxpartab</span>(<span class="fu">pmxparframe</span>(outputs, meta), <span class="at">footnote=</span>footnote)</span></code></pre></div>
 <div class="Rpmxpartab"><table>
 <thead>
 <tr>
-<th rowspan="2">Parameter</th>
-<th rowspan="2">Estimate</th>
-<th rowspan="2">RSE%</th>
-<th rowspan="2">95% CI</th>
-<th rowspan="2">Shrinkage</th>
+<th>Parameter</th>
+<th>Estimate</th>
+<th>RSE%</th>
+<th>95% CI</th>
+<th>Shrinkage</th>
 </tr>
 
 </thead>
@@ -389,9 +389,254 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </tbody>
 <tfoot><tr><td colspan="5" class="partabfootnote"><p>CI=confidence interval; RSE=relative standard error.</p>
+
+<p>Source: run001</p>
 </td></tr></tfoot>
 </table>
 </div>
+<p>It is also possible to use the pipe syntax:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>outputs <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxparframe</span>(meta) <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxpartab</span>(<span class="at">footnote=</span>footnote)</span></code></pre></div>
+<div class="Rpmxpartab"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Estimate</th>
+<th>RSE%</th>
+<th>95% CI</th>
+<th>Shrinkage</th>
+</tr>
+
+</thead>
+<tbody>
+<tr>
+<td class="partabsectionheading">Typical Values</td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+</tr>
+<tr>
+<td class="partablabelindent">Clearance (L/h)</td>
+<td>0.482</td>
+<td>2.87</td>
+<td>0.455 – 0.510</td>
+<td>-</td>
+</tr>
+<tr>
+<td class="partablabelindent">Volume (L)</td>
+<td>1.06</td>
+<td>0.555</td>
+<td>1.05 – 1.07</td>
+<td>-</td>
+</tr>
+<tr>
+<td class="partabsectionheading">Between Subject Variability</td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+</tr>
+<tr>
+<td class="partablabelindent">On Clearance</td>
+<td>0.315 (32.3%)</td>
+<td>5.99</td>
+<td>0.278 – 0.352</td>
+<td>9.55%</td>
+</tr>
+<tr>
+<td class="partablabelindent">On Volume</td>
+<td>0.536 (57.7%)</td>
+<td>16.8</td>
+<td>0.360 – 0.712</td>
+<td>47.9%</td>
+</tr>
+<tr>
+<td class="partabsectionheading">Residual Error</td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+</tr>
+<tr>
+<td class="partablabelindent">Proportional Error (%)</td>
+<td>5.08</td>
+<td>3.60</td>
+<td>4.73 – 5.44</td>
+<td>-</td>
+</tr>
+
+</tbody>
+<tfoot><tr><td colspan="5" class="partabfootnote"><p>CI=confidence interval; RSE=relative standard error.</p>
+
+<p>Source: run001</p>
+</td></tr></tfoot>
+</table>
+</div>
+</div>
+<div id="random-effects-and-off-diagonal-elements" class="section level2">
+<h2>Random effects and off-diagonal elements</h2>
+<p>There is some debate on the best way to present the random effects from a mixed-effects model (ie, the parameter(s) that describe the (joint) distribution of the random effects, which are typically assumed to follow a multivariate normal distribution). Some modelers are used to seeing the variances and covariances, while others (such as this author) prefer the standard deviations and correlations. In any case, <code>pmxpartab</code> is agnostic to this choice, and gives freedom and flexibility in this respect.</p>
+<p>If following conventions, between-individual random effect parameters are contained in the <code>om</code> component of <code>est</code>, <code>se</code> and <code>fixed</code> (they can also be at the top level). Thus, one may have something like:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>outputs <span class="ot">&lt;-</span> <span class="fu">yaml.load</span>(<span class="st">&quot;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">est:</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">  nCL:     0.0994859</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">  nVC:     0.2873220</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="st">  nCL_nVC: 0.0133415</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="st">se:</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">  nCL:  0.0188891</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="st">  nVC:  0.0900352</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">yaml.load</span>(<span class="st">&quot;</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="st">parameters:</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nCL&#39;</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;On Clearance&#39;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nVC&#39;</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;On Volume&#39;</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nCL_nVC&#39;</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Covariance CL-Vc&#39;</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span>)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>outputs <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxparframe</span>(meta) <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxpartab</span>()</span></code></pre></div>
+<div class="Rpmxpartab"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Estimate</th>
+<th>RSE%</th>
+<th>95% CI</th>
+</tr>
+
+</thead>
+<tbody>
+<tr>
+<td class="partabsectionheading">Between Subject Variability</td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+</tr>
+<tr>
+<td class="partablabelindent">On Clearance</td>
+<td>0.0995</td>
+<td>19.0</td>
+<td>0.0625 – 0.137</td>
+</tr>
+<tr>
+<td class="partablabelindent">On Volume</td>
+<td>0.287</td>
+<td>31.3</td>
+<td>0.111 – 0.464</td>
+</tr>
+<tr>
+<td class="partablabelindent">Covariance CL-Vc</td>
+<td>0.0133</td>
+<td>-</td>
+<td>-</td>
+</tr>
+
+</tbody>
+</table>
+</div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>om_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;nCL&quot;</span>, <span class="st">&quot;nVC&quot;</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>om_cov <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">0.0994859</span>, <span class="fl">0.0133415</span>, <span class="fl">0.0133415</span>, <span class="fl">0.287322</span>), <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(om_cov) <span class="ot">&lt;-</span> <span class="fu">list</span>(om_names, om_names)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>om_cov</span></code></pre></div>
+<pre><code>##           nCL       nVC
+## nCL 0.0994859 0.0133415
+## nVC 0.0133415 0.2873220</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(linpk)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>om_cov <span class="ot">&lt;-</span> linpk<span class="sc">::</span><span class="fu">LTmat</span>(<span class="fu">c</span>(<span class="fl">0.0994859</span>, <span class="fl">0.0133415</span>, <span class="fl">0.287322</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(om_cov) <span class="ot">&lt;-</span> <span class="fu">list</span>(om_names, om_names)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>om_cov</span></code></pre></div>
+<pre><code>##           nCL       nVC
+## nCL 0.0994859 0.0133415
+## nVC 0.0133415 0.2873220</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>om_cor <span class="ot">&lt;-</span> <span class="fu">cov2cor</span>(om_cov)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(om_cor) <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(om_cov))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(om_cor) <span class="ot">&lt;-</span> <span class="fu">list</span>(om_names, om_names)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>om_cor</span></code></pre></div>
+<pre><code>##            nCL        nVC
+## nCL 0.31541386 0.07891135
+## nVC 0.07891135 0.53602425</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>outputs<span class="sc">$</span>est<span class="sc">$</span>om_cov <span class="ot">&lt;-</span> om_cov</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>outputs<span class="sc">$</span>est<span class="sc">$</span>om_cor <span class="ot">&lt;-</span> om_cor</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>outputs<span class="sc">$</span>est<span class="sc">$</span>om <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fu">diag</span>(om_cov))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">yaml.load</span>(<span class="st">&quot;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="st">parameters:</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nCL&#39;</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;On Clearance&#39;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;nVC&#39;</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;On Volume&#39;</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;om_cov(nCL,nVC)&#39;</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Covariance&#39;</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="st">- name:  &#39;om_cor(nCL,nVC)&#39;</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="st">  label: &#39;Correlation&#39;</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="st">  type:  IIV</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span>)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>outputs <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxparframe</span>(meta) <span class="sc">|</span><span class="er">&gt;</span> <span class="fu">pmxpartab</span>()</span></code></pre></div>
+<div class="Rpmxpartab"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Estimate</th>
+<th>RSE%</th>
+<th>95% CI</th>
+</tr>
+
+</thead>
+<tbody>
+<tr>
+<td class="partabsectionheading">Between Subject Variability</td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+<td class="partabsectionheading"></td>
+</tr>
+<tr>
+<td class="partablabelindent">On Clearance</td>
+<td>0.0995</td>
+<td>19.0</td>
+<td>0.0625 – 0.137</td>
+</tr>
+<tr>
+<td class="partablabelindent">On Volume</td>
+<td>0.287</td>
+<td>31.3</td>
+<td>0.111 – 0.464</td>
+</tr>
+<tr>
+<td class="partablabelindent">Covariance</td>
+<td>0.0133</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td class="partablabelindent">Correlation</td>
+<td>0.0789</td>
+<td>-</td>
+<td>-</td>
+</tr>
+
+</tbody>
+</table>
+</div>
+</div>
+<div id="bootstrap-results" class="section level2">
+<h2>Bootstrap results</h2>
+<p>TBD</p>
 </div>
 
 
