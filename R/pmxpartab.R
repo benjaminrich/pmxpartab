@@ -488,6 +488,10 @@ partab_row <- function(
         }
     }
     all <- c(est=est, se=se, rse=rse, pval=pval, ci95=ci95, boot.median=boot.median, boot.ci95=boot.ci95, shrinkage=shrinkage)
+    args <- list(...)
+    if (!is.null(names(args))) {
+        all <- c(all, args[!(names(args) %in% c("", names(all)))])
+    }
     paste0(c('<tr>',
         sprintf('<td class="%s">%s</td>', ifelse(isTRUE(indent), "partablabelindent", "partablabelnoindent"), label),
         paste0(sprintf('<td>%s</td>', all[names(columns)]), collapse='\n'),
