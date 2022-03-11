@@ -12,7 +12,7 @@
 
 <meta name="author" content="Benjamin Rich" />
 
-<meta name="date" content="2022-01-13" />
+<meta name="date" content="2022-03-11" />
 
 <title>Introduction to pmxpartab</title>
 
@@ -142,7 +142,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <h1 class="title toc-ignore">Introduction to <code>pmxpartab</code></h1>
 <h4 class="author">Benjamin Rich</h4>
-<h4 class="date">2022-01-13</h4>
+<h4 class="date">2022-03-11</h4>
 
 
 <div id="TOC">
@@ -165,7 +165,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Generate an intermediate <code>data.frame</code> from a list of outputs and metadata.</li>
 <li>Genreate an HTML table from the intermediate <code>data.frame</code>.</li>
 </ol>
-<p>For the first step, the imputs are:</p>
+<p>For the first step, the inputs are:</p>
 <ol style="list-style-type: decimal">
 <li>Model outputs (parameter estimates, standard errors, etc.)</li>
 <li>Metadata, describing the outputs (labels, units, transformations, etc.)</li>
@@ -232,12 +232,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Putting this all together, we can produce a <code>data.frame</code> like this:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>parframe <span class="ot">&lt;-</span> <span class="fu">pmxparframe</span>(outputs, meta)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>parframe</span></code></pre></div>
-<pre><code>##   name              label units       type    trans fixed      est          se       rse     lci95     uci95         pval shrinkage
-## 1   CL          Clearance   L/h Structural     &lt;NA&gt; FALSE 0.482334 0.013864600  2.874481 0.4551594 0.5095086 0.000000e+00        NA
-## 2   VC             Volume     L Structural      exp FALSE 1.061060 0.005890157  0.555120 1.0495781 1.0726679 0.000000e+00        NA
-## 3  nCL       On Clearance  &lt;NA&gt;        IIV SD (CV%) FALSE 0.315414 0.018889100  5.988669 0.2783914 0.3524366 0.000000e+00   9.54556
-## 4  nVC          On Volume  &lt;NA&gt;        IIV SD (CV%) FALSE 0.536025 0.090035200 16.796829 0.3595560 0.7124940 2.624601e-09  47.87710
-## 5 ERRP Proportional Error     %        RUV        % FALSE 5.084970 0.182850000  3.595891 4.7265840 5.4433560 0.000000e+00        NA</code></pre>
+<pre><code>##   name              label units       type    trans fixed      est          se       rse
+## 1   CL          Clearance   L/h Structural     &lt;NA&gt; FALSE 0.482334 0.013864600  2.874481
+## 2   VC             Volume     L Structural      exp FALSE 1.061060 0.005890157  0.555120
+## 3  nCL       On Clearance  &lt;NA&gt;        IIV SD (CV%) FALSE 0.315414 0.018889100  5.988669
+## 4  nVC          On Volume  &lt;NA&gt;        IIV SD (CV%) FALSE 0.536025 0.090035200 16.796829
+## 5 ERRP Proportional Error     %        RUV        % FALSE 5.084970 0.182850000  3.595891
+##       lci95     uci95         pval shrinkage
+## 1 0.4551594 0.5095086 0.000000e+00        NA
+## 2 1.0495781 1.0726679 0.000000e+00        NA
+## 3 0.2783914 0.3524366 0.000000e+00   9.54556
+## 4 0.3595560 0.7124940 2.624601e-09  47.87710
+## 5 4.7265840 5.4433560 0.000000e+00        NA</code></pre>
 <p>Finally, our nicely formatted table looks like this:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pmxpartab</span>(parframe)</span></code></pre></div>
 <div class="Rpmxpartab"><table>

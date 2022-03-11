@@ -30,7 +30,7 @@ The creation of the parameter table proceeds in 2 steps:
 1. Generate an intermediate `data.frame` from a list of outputs and metadata.
 2. Genreate an HTML table from the intermediate `data.frame`.
 
-For the first step, the imputs are:
+For the first step, the inputs are:
 
 1. Model outputs (parameter estimates, standard errors, etc.)
 2. Metadata, describing the outputs (labels, units, transformations, etc.)
