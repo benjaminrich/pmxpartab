@@ -14,6 +14,7 @@ pmxpartab(
     = "Inter-Occasion Variability"),
   footnote = NULL,
   show.fixed.to.zero = FALSE,
+  merge.units = TRUE,
   na = "-",
   digits = 3
 )
@@ -39,6 +40,10 @@ formatted table (may contain HTML codes).}
 fixed to zero should appear in the formatted table (by default, parameters
 that are formatted to values other than zero do appear in the table, but
 those that are fixed to zero are ignored).}
+
+\item{merge.units}{A \code{logical} indicating whether or not units (if present)
+should be merged into the parameter label (i.e., in parentheses following
+the name/label).}
 
 \item{na}{A \code{character} string to use in the formatted table to indicate
 missing or non-applicable values.}

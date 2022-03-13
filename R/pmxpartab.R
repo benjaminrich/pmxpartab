@@ -1,5 +1,4 @@
-#' Get metadata from outputs
-#' @keywords internal
+# Internal function that gets metadata from outputs
 get_metadata <- function(outputs) {
 
     # If metadata is stored with outputs, return it
@@ -38,7 +37,7 @@ get_metadata <- function(outputs) {
 #' than other approaches.
 #'
 #' `outputs` is a named `list`, with the following elements:
-#' - `est`:       estimated values (ie, point estimates)
+#' - `est`:       estimated values (i.e., point estimates)
 #' - `se`:        standard errors
 #' - `fixed`:     designates parameters that were fixed rather than estimated
 #' - `shrinkage`: for random effects, the estimated percent shrinkage
@@ -52,7 +51,7 @@ get_metadata <- function(outputs) {
 #' - `om_cov` : individual-level random effects expressed as a
 #' variance-covariance matrix
 #' - `om_cor` : individual-level random effects expressed as a matrix of
-#' correlations (off-diagnal elements) and standard deviations (diagonal
+#' correlations (off-diagonal elements) and standard deviations (diagonal
 #' elements)
 #' - `sg`     : named list (or vector) of observation-level random effects
 #' expressed as standard deviations
@@ -68,10 +67,10 @@ get_metadata <- function(outputs) {
 #' - `type`:      Parameters can be grouped into sections by type. The standard types are:
 #'   - `Structural`:      Structural model parameters
 #'   - `CovariateEffect`: Parameters that relate covariates to structural parameters
-#'   - `IIV`:             Inter-individual (ie, between-subject) variability
+#'   - `IIV`:             Inter-individual (i.e., between-subject) variability
 #'   - `IOV`:             Inter-occasion variability
 #'   - `RUV`:             Residual unexplained variability
-#' - `trans`:     Parameters can be presented on a (back)transformed scale (eg,
+#' - `trans`:     Parameters can be presented on a (back)transformed scale (e.g.,
 #'                antilog). Importantly, transformation are also applied to
 #'                standard errors (by "propagation of errors", also known as
 #'                the delta method) to preserve (asymptotic) correctness, and
@@ -89,7 +88,7 @@ get_metadata <- function(outputs) {
 #'                  to percent coefficient of variation by the formula
 #'                  \eqn{100\times\sqrt{\exp(\omega^2)-1}}
 #'   - `SD (CV%)`:  similar to the above, but the parameter remains on its original
-#'                  scale (ie, standard deviation) with the percent coefficient
+#'                  scale (i.e., standard deviation) with the percent coefficient
 #'                  of variation displayed in parentheses next to it (does not
 #'                  affect standard errors or confidence intervals).
 #'
@@ -106,7 +105,7 @@ get_metadata <- function(outputs) {
 #' - `shrinkage`: percent shrinkage if applicable (`numeric`)
 #'
 #' Other attributes from `meta` will also be preserved as columns. The order of
-#' the rows is determined by the order of the parameters in `meta` (ther order
+#' the rows is determined by the order of the parameters in `meta` (the order
 #' in `outputs` is irrelevant).
 #'
 #' @seealso [pmxpartab]
@@ -378,12 +377,14 @@ p <- function(x, digits=3, flag="", round.integers=FALSE){
     paste0(prefix, x)
 }
 
+# Internal function that produces a table section heading
 partab_section <- function(label, ncolumns) {
     paste0(c('<tr>',
         paste0(sprintf('<td class="partabsectionheading">%s</td>', c(label, rep("", ncolumns-1))), collapse='\n'),
         '</tr>'), collapse='\n')
 }
 
+# Internal function that produces a single table row
 partab_row <- function(
     name,
     label          = NULL,
@@ -404,6 +405,7 @@ partab_row <- function(
     boot.lci       = NULL,
     boot.uci       = NULL,
     shrinkage      = NULL,
+    merge.units    = TRUE,
     na             = "-",
     digits         = 3,
     indent         = TRUE,
@@ -425,7 +427,9 @@ partab_row <- function(
 
     # Check for units
     if (!is.null(units) && !is.na(units)) {
-        label <- sprintf("%s (%s)", label, units)
+        if (merge.units) {
+            label <- sprintf("%s (%s)", label, units)
+        }
     }
 
     if (!is.null(trans) && !is.na(trans) && trans == "SD (CV%)") {
@@ -515,6 +519,9 @@ partab_row <- function(
 #' fixed to zero should appear in the formatted table (by default, parameters
 #' that are formatted to values other than zero do appear in the table, but
 #' those that are fixed to zero are ignored).
+#' @param merge.units A `logical` indicating whether or not units (if present)
+#' should be merged into the parameter label (i.e., in parentheses following
+#' the name/label).
 #' @param na A `character` string to use in the formatted table to indicate
 #' missing or non-applicable values.
 #' @param digits Number of significant digits to include in the formatted
@@ -582,9 +589,10 @@ pmxpartab <- function(
 
     footnote=NULL,
 
-    show.fixed.to.zero=FALSE,
-    na="-",
-    digits=3) {
+    show.fixed.to.zero = FALSE,
+    merge.units        = TRUE,
+    na                 = "-",
+    digits             = 3) {
 
     if (isFALSE(show.fixed.to.zero) & !is.null(parframe$fixed)) {
         parframe <- parframe[!(parframe$fixed & parframe$est==0),, drop=FALSE]
@@ -617,7 +625,7 @@ pmxpartab <- function(
                 tbody <- paste0(tbody, partab_section(label, ncolumns=ncolumns), '\n')
             }
         }
-        args <- c(parframe[i,, drop=FALSE], list(na=na, digits=digits, indent=sections, columns=columns))
+        args <- c(parframe[i,, drop=FALSE], list(merge.units=merge.units, na=na, digits=digits, indent=sections, columns=columns))
         tbody <- paste0(tbody, do.call(partab_row, args), '\n')
     }
     tbody <- paste0('<tbody>\n', tbody, '\n</tbody>\n')
@@ -737,9 +745,9 @@ parse_parameter_description <- function(string) {
 #' statistically significant (i.e., less then `alpha`).
 #' @param html A logical flag indicating whether to return HTML code or plain
 #' text.
-#' @param unicode.le A logical flag indicating whether to use the unicode
-#' symbol "&#x2264;" for "less-than-or-equal-to" (only applies when `html` is
-#' `FALSE`).
+#' @param unicode.le A logical flag indicating whether to use unicode
+#' symbol [U+2264](https://www.compart.com/en/unicode/U+2264)
+#' for "less-than-or-equal-to" (only applies when `html` is `FALSE`).
 #' @seealso [base::format.pval]
 #' @examples
 #' x <- c(1, 0.5, 0.05, 0.049, 0.01, 0.001, 0.0001, 0.00001)

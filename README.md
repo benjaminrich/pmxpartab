@@ -4,8 +4,7 @@
 # pmxpartab
 
 <!-- badges: start -->
-
-[![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
+<!-- [![experimental](https://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges) -->
 <!-- badges: end -->
 
 This R package produces nice looking parameter tables for pharmacometric
@@ -28,7 +27,7 @@ The creation of the parameter table proceeds in 2 steps:
 
 1.  Generate an intermediate `data.frame` from model outputs and
     metadata.
-2.  Genreate a formatted HTML table from that intermediate `data.frame`.
+2.  Generate a formatted HTML table from that intermediate `data.frame`.
 
 Both the model outputs and metadata are provided as R lists (it is a
 separate problem to extract the outputs from the modeling software into

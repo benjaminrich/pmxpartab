@@ -26,7 +26,7 @@ A \code{data.frame} with a row for each parameter, and the following columns:
 }
 
 Other attributes from \code{meta} will also be preserved as columns. The order of
-the rows is determined by the order of the parameters in \code{meta} (ther order
+the rows is determined by the order of the parameters in \code{meta} (the order
 in \code{outputs} is irrelevant).
 }
 \description{
@@ -48,7 +48,7 @@ than other approaches.
 
 \code{outputs} is a named \code{list}, with the following elements:
 \itemize{
-\item \code{est}:       estimated values (ie, point estimates)
+\item \code{est}:       estimated values (i.e., point estimates)
 \item \code{se}:        standard errors
 \item \code{fixed}:     designates parameters that were fixed rather than estimated
 \item \code{shrinkage}: for random effects, the estimated percent shrinkage
@@ -63,7 +63,7 @@ expressed as standard deviations
 \item \code{om_cov} : individual-level random effects expressed as a
 variance-covariance matrix
 \item \code{om_cor} : individual-level random effects expressed as a matrix of
-correlations (off-diagnal elements) and standard deviations (diagonal
+correlations (off-diagonal elements) and standard deviations (diagonal
 elements)
 \item \code{sg}     : named list (or vector) of observation-level random effects
 expressed as standard deviations
@@ -81,11 +81,11 @@ used in \code{outputs} as it is used to make that association. The optional attr
 \itemize{
 \item \code{Structural}:      Structural model parameters
 \item \code{CovariateEffect}: Parameters that relate covariates to structural parameters
-\item \code{IIV}:             Inter-individual (ie, between-subject) variability
+\item \code{IIV}:             Inter-individual (i.e., between-subject) variability
 \item \code{IOV}:             Inter-occasion variability
 \item \code{RUV}:             Residual unexplained variability
 }
-\item \code{trans}:     Parameters can be presented on a (back)transformed scale (eg,
+\item \code{trans}:     Parameters can be presented on a (back)transformed scale (e.g.,
 antilog). Importantly, transformation are also applied to
 standard errors (by "propagation of errors", also known as
 the delta method) to preserve (asymptotic) correctness, and
@@ -104,7 +104,7 @@ distributed, transforms the standard deviation \eqn{\omega}
 to percent coefficient of variation by the formula
 \eqn{100\times\sqrt{\exp(\omega^2)-1}}
 \item \verb{SD (CV\%)}:  similar to the above, but the parameter remains on its original
-scale (ie, standard deviation) with the percent coefficient
+scale (i.e., standard deviation) with the percent coefficient
 of variation displayed in parentheses next to it (does not
 affect standard errors or confidence intervals).
 }

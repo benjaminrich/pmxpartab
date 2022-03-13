@@ -35,9 +35,10 @@ For the first step, the inputs are:
 1. Model outputs (parameter estimates, standard errors, etc.)
 2. Metadata, describing the outputs (labels, units, transformations, etc.)
 
-To keep things generic, both the model outputs and metadata must be provided
-as R lists (it is a separate problem to extract the outputs from the modeling
-software into the required list format).
+To keep things generic, both the model outputs and metadata must be provided as
+R lists (it is a separate problem to extract the outputs from the modeling
+software into the required list format, although the package does include an
+auxiliary function to help deal specifically with NONMEM outputs).
 
 For illustration, we will use a YAML description of the outputs and metadata,
 which can easily be read into R. First, the outputs:
@@ -149,7 +150,7 @@ outputs |> pmxparframe(meta) |> pmxpartab(footnote=footnote)
 
 
 There is some debate on the best way to present the random effects from a
-mixed-effects model (ie, the parameter(s) that describe the (joint)
+mixed-effects model (i.e., the parameter(s) that describe the (joint)
 distribution of the random effects, which are typically assumed to follow a
 multivariate normal distribution).  Some modelers are accustomed to seeing the
 variances and covariances, while others (such as me) prefer the standard

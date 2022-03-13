@@ -31,9 +31,9 @@ statistically significant (i.e., less then \code{alpha}).}
 \item{html}{A logical flag indicating whether to return HTML code or plain
 text.}
 
-\item{unicode.le}{A logical flag indicating whether to use the unicode
-symbol "≤" for "less-than-or-equal-to" (only applies when \code{html} is
-\code{FALSE}).}
+\item{unicode.le}{A logical flag indicating whether to use unicode
+symbol \href{https://www.compart.com/en/unicode/U+2264}{U+2264}
+for "less-than-or-equal-to" (only applies when \code{html} is \code{FALSE}).}
 }
 \description{
 Format p-values
