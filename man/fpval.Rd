@@ -35,6 +35,9 @@ text.}
 symbol \href{https://www.compart.com/en/unicode/U+2264}{U+2264}
 for "less-than-or-equal-to" (only applies when \code{html} is \code{FALSE}).}
 }
+\value{
+A character vector of the same length as \code{pval}.
+}
 \description{
 Format p-values
 }

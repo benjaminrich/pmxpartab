@@ -2,6 +2,20 @@
 
 This is the first submission of `pmxpartab` to CRAN.
 
+Addressed the following comments from CRAN reviewer:
+
+* From: Julia Haider <julia.haider@wu.ac.at> on 14-Mar-2022:
+
+  - Please add \value to .Rd files regarding exported methods and explain the
+    functions results in the documentation. Please write about the structure of
+    the output (class) and also what the output means. (If a function does not
+    return a value, please document that too, e.g. \value{No return value, called
+    for side effects} or similar)
+    
+    Missing Rd-tags:
+    * fpval.Rd: \value
+    * pmxpartab.Rd: \value
+
 ## Test environments
 
 * Local:

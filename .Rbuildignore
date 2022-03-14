@@ -6,3 +6,4 @@
 .*\.bak$
 ^README\.Rmd$
 ^README\.html$
+^CRAN-SUBMISSION$

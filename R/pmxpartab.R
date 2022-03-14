@@ -527,6 +527,10 @@ partab_row <- function(
 #' @param digits Number of significant digits to include in the formatted
 #' table.
 #' 
+#' @return An object of class `"pmxpartab"`. This is essentially just an HTML
+#' character string that displays in the default web browser or viewer when
+#' printed (as per [htmltools::print.html()]).
+#' 
 #' @seealso [pmxparframe]
 #'
 #' @examples
@@ -748,6 +752,7 @@ parse_parameter_description <- function(string) {
 #' @param unicode.le A logical flag indicating whether to use unicode
 #' symbol [U+2264](https://www.compart.com/en/unicode/U+2264)
 #' for "less-than-or-equal-to" (only applies when `html` is `FALSE`).
+#' @return A character vector of the same length as `pval`.
 #' @seealso [base::format.pval]
 #' @examples
 #' x <- c(1, 0.5, 0.05, 0.049, 0.01, 0.001, 0.0001, 0.00001)
