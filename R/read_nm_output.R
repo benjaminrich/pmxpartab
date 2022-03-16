@@ -90,7 +90,7 @@ read_nm_output <- function(
         }
 
         if (names(ext)[ncol(ext)] != "obj") {
-            warning("This form of estimation is not supported at the moment.")
+            warning("This form of estimation may not be fully supported. Please interpret with caution.")
         }
 
         ifinal <- NULL
