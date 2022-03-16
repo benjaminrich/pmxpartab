@@ -5,6 +5,11 @@
 
 <!-- badges: start -->
 <!-- [![experimental](https://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges) -->
+<!-- [![R-CMD-check](https://github.com/benjaminrich/pmxpartab/workflows/R-CMD-check/badge.svg)](https://github.com/benjaminrich/pmxpartab/actions) -->
+
+[![CRAN\_Release\_Badge](https://www.r-pkg.org/badges/version-ago/pmxpartab)](https://CRAN.R-project.org/package=pmxpartab)
+<!-- [![CRAN\_Download\_Badge](https://cranlogs.r-pkg.org/badges/pmxpartab)](https://CRAN.R-project.org/package=pmxpartab) -->
+
 <!-- badges: end -->
 
 This R package produces nice looking parameter tables for pharmacometric
