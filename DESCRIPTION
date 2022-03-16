@@ -1,12 +1,12 @@
 Package: pmxpartab
 Type: Package
 Version: 0.5.0
-Date: 2022-03-13
+Date: 2022-03-15
 Title: Parameter Tables for PMx Analyses
 Authors@R: person("Benjamin", "Rich", role=c("aut", "cre"), email="mail@benjaminrich.net")
 Description: Generate nicely formatted HTML tables to display estimation results for
   pharmacometric models.
-License: GPL-3
+License: MIT + file LICENSE
 Imports: utils,table1,data.table,htmltools,knitr
 Suggests: rmarkdown,yaml,linpk,survival
 VignetteBuilder: knitr

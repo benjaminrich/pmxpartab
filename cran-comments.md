@@ -16,6 +16,8 @@ Addressed the following comments from CRAN reviewer:
     * fpval.Rd: \value
     * pmxpartab.Rd: \value
 
+Also, changed license to MIT.
+
 ## Test environments
 
 * Local:
