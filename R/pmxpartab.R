@@ -142,9 +142,11 @@ pmxparframe <- function(outputs, meta=get_metadata(outputs)) {
     z <- data.table::rbindlist(param, fill=T)
 
     # Legacy
-    if (!is.null(outputs$th))      outputs$est$th <- outputs$th
-    if (!is.null(outputs$sg))      outputs$est$sg <- outputs$sg
-    if (!is.null(outputs$om))      outputs$est$om <- outputs$om
+    if (!is.null(outputs$th))      outputs$est$th     <- outputs$th
+    if (!is.null(outputs$sg))      outputs$est$sg     <- outputs$sg
+    if (!is.null(outputs$om))      outputs$est$om     <- outputs$om
+    if (!is.null(outputs$om_cov))  outputs$est$om_cov <- outputs$om_cov
+    if (!is.null(outputs$om_cor))  outputs$est$om_cor <- outputs$om_cor
 
     if (is.null(outputs$est))      outputs$est      <- list()
     if (is.null(outputs$est$th))   outputs$est$th   <- list()
@@ -168,8 +170,8 @@ pmxparframe <- function(outputs, meta=get_metadata(outputs)) {
     nm <- setdiff(names(outputs$fixed), c("th", "om", "om_cov", "om_cor", "sg", "all"))
     outputs$fixed$all <- c(outputs$fixed$all, outputs$fixed[nm])
 
-    outputs$est$all   <- with(outputs$est, c(all, th, om, sg))
-    outputs$se$all    <- with(outputs$se, c(all, th, om, sg))
+    outputs$est$all   <- with(outputs$est,   c(all, th, om, sg))
+    outputs$se$all    <- with(outputs$se,    c(all, th, om, sg))
     outputs$fixed$all <- with(outputs$fixed, c(all, th, om, sg))
 
     z$fixed     <- as.logical(NA)

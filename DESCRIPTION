@@ -1,7 +1,7 @@
 Package: pmxpartab
 Type: Package
-Version: 0.5.0
-Date: 2022-03-15
+Version: 0.6.0
+Date: 2022-12-15
 Title: Parameter Tables for Pharmacometric Analyses
 Authors@R: person("Benjamin", "Rich", role=c("aut", "cre"), email="mail@benjaminrich.net")
 Description: Generate nicely formatted HTML tables to display estimation results for
