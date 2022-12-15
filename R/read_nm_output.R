@@ -525,6 +525,9 @@ read_nm_output <- function(
 
     }
 
+    if (length(res) == 0) {
+        stop("No output found")
+    }
     res
 }
 
