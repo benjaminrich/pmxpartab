@@ -451,7 +451,7 @@ read_nm_output <- function(
 
         bs.th <- function(x) {
             is.th <- names(x) %in% th_names | grepl("^THETA", names(x))
-            x[, is.th, drop=F]
+            setNames(x[, is.th, drop=F], th_names)
         }
 
         bs.matrix <- function(x, matrx=c("OMEGA", "SIGMA")) {
@@ -461,14 +461,13 @@ read_nm_output <- function(
 
             if (matrx == "OMEGA") {
                 d <- length(res$om)
-                q <- om_names
+                z <- om_names
             } else {
                 d <- length(res$sg)
-                q <- sg_names
+                z <- sg_names
             }
+
             nm <- outer(1:d, 1:d, function(x, y) paste0(matrx, "(", y, ",", x, ")"))
-            dnm <- diag(nm)
-            nx[q] <- dnm
             nm <- nm[upper.tri(nm, diag=T)]
             names(x) <- nx
             m <- matrix(0, nrow=nrow(x), ncol=length(nm))
@@ -484,7 +483,6 @@ read_nm_output <- function(
                     m <- sqrt(m)
                 } else {
                     m <- t(apply(m, 1, function(x) {
-                        #if (length(x) == 1) return(sqrt(x))
                         v <- LTmat(x)
                         s <- diag(1/sqrt(diag(v)))
                         r <- s %*% v %*% s
@@ -494,10 +492,15 @@ read_nm_output <- function(
                     }))
                     m <- as.data.frame(m)
                 }
+                cov.or.cor <- "cor"
+            } else {
+                cov.or.cor <- "cov"
             }
-            names(nm) <- nm
-            nm[dnm] <- q
-            names(m) <- nm
+
+            nm2 <- outer(z, z, function(x, y) ifelse(x==y, x, paste0(cov.or.cor, "(", y, ",", x, ")")))
+            nm2 <- nm2[upper.tri(nm2, diag=T)]
+            names(m) <- nm2
+
             m
         }
 
@@ -531,8 +534,8 @@ read_nm_output <- function(
         res$bootstrap$data        <- bootstrap.keep
         res$bootstrap$orig        <- bootstrap.orig
         res$bootstrap$median      <- sapply(res$bootstrap$data[success,], median, na.rm=T)
-        res$bootstrap$ci          <- lapply(res$bootstrap$data[success,], quantile, probs=c(0.025, 0.975), na.rm=T)
-        res$bootstrap$ci          <- as.data.frame(res$bootstrap$ci, optional=T)
+        res$bootstrap$ci95        <- lapply(res$bootstrap$data[success,], quantile, probs=c(0.025, 0.975), na.rm=T)
+        res$bootstrap$ci95        <- as.data.frame(res$bootstrap$ci95, optional=T)
         res$bootstrap$bias        <- 100*(res$bootstrap$median - res$bootstrap$orig)/res$bootstrap$orig
 
     }
