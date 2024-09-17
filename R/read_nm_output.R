@@ -333,6 +333,18 @@ read_nm_output <- function(
             runtime.postproc <- scan(quiet=T, text=gsub(".*:", "", l[i]))
         }
 
+        # Omega form
+        #diagonal.omega <- FALSE
+        #i <- grepl("0OMEGA HAS BLOCK FORM:", l)
+        #if (any(i)) {
+        #    j <- grepl("0DEFAULT OMEGA BOUNDARY TEST OMITTED:", l)
+        #}
+        #i <- grepl("0OMEGA HAS SIMPLE DIAGONAL FORM WITH DIMENSION:", l)
+        #if (any(i)) {
+        #    diagonal.omega <- TRUE
+        #    omega.dim <- scan(quiet=T, text=gsub(".*:", "", l[i]))
+        #}
+
         res$nmversion        <- nmversion
         res$runstarted       <- runstarted
         res$runtime$estim    <- runtime.estim
