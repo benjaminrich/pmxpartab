@@ -7,3 +7,6 @@
 ^README\.Rmd$
 ^README\.html$
 ^CRAN-SUBMISSION$
+^temp.R$
+^temp.html$
+^temp.docx$

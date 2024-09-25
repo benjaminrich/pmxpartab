@@ -380,10 +380,8 @@ p <- function(x, digits=3, flag="", round.integers=FALSE){
 }
 
 # Internal function that produces a table section heading
-partab_section <- function(label, ncolumns) {
-    paste0(c('<tr>',
-        paste0(sprintf('<td class="partabsectionheading">%s</td>', c(label, rep("", ncolumns-1))), collapse='\n'),
-        '</tr>'), collapse='\n')
+partab_section <- function(label, ncolumns, ..., ft) {
+    ft <- ft
 }
 
 # Internal function that produces a single table row
@@ -413,7 +411,7 @@ partab_row <- function(
     indent         = TRUE,
     have.bootstrap = !is.null(boot.median),
     columns        = c(est="Estimate", rse="RSE%", ci95="95% CI", shrinkage="Shrinkage"),
-    ...) {
+    ..., ft, section, col_keys) {
 
     # Check for superscript
     if (is.null(superscript) || is.na(superscript)) {
@@ -465,13 +463,13 @@ partab_row <- function(
     } else if (is.na(lci95) || is.na(uci95)) {
         ci95 <- na
     } else {
-        ci95 <- sprintf('%s &ndash; %s', p(lci95, digits), p(uci95, digits))
+        ci95 <- sprintf('%s \U{2013} %s', p(lci95, digits), p(uci95, digits))
     }
 
     if (is.null(pval) || is.na(pval)) {
         pval <- na
     } else {
-        pval <- fpval(pval, digits=digits, html=TRUE)
+        pval <- fpval(pval, digits=digits, html=FALSE, unicode.le=TRUE)
     }
 
     if (have.bootstrap) {
@@ -480,7 +478,7 @@ partab_row <- function(
             boot.ci95 <- na
         } else {
             boot.median <- p(boot.median, digits)
-            boot.ci95 <- sprintf('%s &ndash; %s', p(boot.lci, digits), p(boot.uci, digits))
+            boot.ci95 <- sprintf('%s \U{2013} %s', p(boot.lci, digits), p(boot.uci, digits))
         }
     } else {
         boot.ci95 <- NULL
@@ -498,10 +496,8 @@ partab_row <- function(
     if (!is.null(names(args))) {
         all <- c(all, args[!(names(args) %in% c("", names(all)))])
     }
-    paste0(c('<tr>',
-        sprintf('<td class="%s">%s</td>', ifelse(isTRUE(indent), "partablabelindent", "partablabelnoindent"), label),
-        paste0(sprintf('<td>%s</td>', all[names(columns)]), collapse='\n'),
-        '</tr>'), collapse='\n')
+
+    ft <- rbind(ft, setNames(c(section, label, all[names(columns)]), col_keys))
 }
 
 #' Generate an formatted HTML table of parameter estimates
@@ -529,9 +525,7 @@ partab_row <- function(
 #' @param digits Number of significant digits to include in the formatted
 #' table.
 #' 
-#' @return An object of class `"pmxpartab"`. This is essentially just an HTML
-#' character string that displays in the default web browser or viewer when
-#' printed (as per [htmltools::print.html()]).
+#' @return An object of class `"flextable"`.
 #' 
 #' @seealso [pmxparframe]
 #'
@@ -610,13 +604,9 @@ pmxpartab <- function(
 
     ncolumns <- length(columns) + 1
 
-    thead <- paste0('<tr>\n<th>Parameter</th>\n',
-        paste0(paste0('<th>', columns, '</th>'), collapse="\n"), '\n</tr>\n')
+    col_keys <- c("Section", "Parameter", columns)
+    ft <- as.data.frame(as.list(setNames(col_keys, col_keys)), check.names=FALSE)[-1,]
 
-    thead <- paste0('<thead>\n', thead, '\n</thead>\n')
-
-
-    tbody <- ""
     for (i in 1:nrow(parframe)) {
         if (isTRUE(sections)) {
             newsection <- (!is.null(parframe$type) && !is.na(parframe$type[i]) && (i == 1 || parframe$type[i] != parframe$type[i-1]))
@@ -628,78 +618,57 @@ pmxpartab <- function(
                     label <- type
                 }
 
-                tbody <- paste0(tbody, partab_section(label, ncolumns=ncolumns), '\n')
+                section <- label
             }
+        } else {
+                section <- as.character(NA)
         }
-        args <- c(parframe[i,, drop=FALSE], list(merge.units=merge.units, na=na, digits=digits, indent=sections, columns=columns))
-        tbody <- paste0(tbody, do.call(partab_row, args), '\n')
+        args <- c(parframe[i,, drop=FALSE], list(merge.units=merge.units, na=na, digits=digits, indent=sections, columns=columns, ft=ft, section=section, col_keys=col_keys))
+        ft <- do.call(partab_row, args)
     }
-    tbody <- paste0('<tbody>\n', tbody, '\n</tbody>\n')
+
+    ft <- setNames(ft, col_keys)
+    if (isTRUE(sections)) {
+        ft <- flextable::as_grouped_data(ft, groups="Section", expand_single=TRUE)
+        ft <- flextable::as_flextable(ft, hide_grouplabel=TRUE)
+        ft <- flextable::bold(ft, part="header", bold=TRUE)
+        ft <- flextable::style(ft, part="header",
+            pr_p=officer::fp_par(text.align="center", padding=2, line_spacing=1))
+        ft <- flextable::style(ft, part="header", j=1,
+            pr_p=officer::fp_par(text.align="left"))
+        ft <- flextable::style(ft,
+            pr_p=officer::fp_par(text.align="center", padding=2, line_spacing=1))
+        ft <- flextable::style(ft, j=1,
+            pr_p=officer::fp_par(text.align="left"))
+        ft <- flextable::style(ft, j=1, i = ~ is.na(Section), 
+            pr_p=officer::fp_par(padding.left=12))
+        ft <- flextable::italic(ft, j=1, i= ~ !is.na(Section), part="body")
+        ft <- flextable::hline(ft, i = ~ before(!is.na(Section), TRUE),
+            border=flextable::fp_border_default(width=1))
+    } else {
+        ft$Section <- NULL
+        ft <- flextable::flextable(ft)
+        ft <- flextable::bold(ft, part="header", bold=TRUE)
+        ft <- flextable::style(ft, part="header",
+            pr_p=officer::fp_par(text.align="center", padding=2, line_spacing=1))
+        ft <- flextable::style(ft, part="header", j=1,
+            pr_p=officer::fp_par(text.align="left"))
+        ft <- flextable::style(ft,
+            pr_p=officer::fp_par(text.align="center", padding=2, line_spacing=1))
+        ft <- flextable::style(ft, j=1,
+            pr_p=officer::fp_par(text.align="left"))
+    }
 
     if (!is.null(footnote)) {
-        footnote <- sprintf('<p>%s</p>\n', footnote)
         footnote <- paste0(footnote, collapse="\n")
-        tfoot <- sprintf('<tfoot><tr><td colspan="%d" class="partabfootnote">%s</td></tr></tfoot>\n', ncolumns, footnote)
-    } else {
-        tfoot <- ""
+        ft <- flextable::add_footer_lines(ft, footnote)
     }
 
-    table <- paste0('<table>\n', thead, tbody, tfoot, '</table>\n')
-    structure(table, class=c("pmxpartab", "html", "character"), html=TRUE)
+    ft <- flextable::font(ft, fontname="Times New Roman", part="all")
+
+    flextable::autofit(ft)
 }
 
-
-#' Print `pmxpartab` object
-#'
-#' @param x An object returned by [pmxpartab].
-#' @param ... Further arguments passed on to other `print` methods.
-#'
-#' @return Returns `x` invisibly.
-#'
-#' @details In an interactive context, the rendered table will be displayed in
-#' a web browser. Otherwise, the HTML code will be printed as text.
-#' @export
-print.pmxpartab <- function(x, ...) {
-    if (interactive()) {
-        z <- htmltools::HTML(x)
-        default.style <- htmltools::htmlDependency("pmxpartab", "1.0",
-            src=system.file(package="pmxpartab", "pmxpartab_defaults_1.0"),
-            stylesheet="pmxpartab_defaults.css")
-        z <- htmltools::div(class="Rpmxpartab", default.style, z)
-        z <- htmltools::browsable(z)
-        print(z, ...) # Calls htmltools:::print.html(z, ...)
-    } else {
-        cat(x)
-    }
-    invisible(x)
-}
-
-
-#' Method for printing in a `knitr` context
-#'
-#' @param x An object returned by [pmxpartab].
-#' @param ... Further arguments passed on to [knitr::knit_print].
-#'
-#' @return A 'character` vector (see [knitr::knit_print]).
-#'
-#' @importFrom knitr knit_print
-#' @export
-knit_print.pmxpartab <- function(x, ...) {
-    knit_to_html <-
-        !is.null(knitr::opts_knit$get("rmarkdown.pandoc.to")) &&
-        grepl("^html", knitr::opts_knit$get("rmarkdown.pandoc.to"))
-
-    if (knit_to_html) {
-        z <- htmltools::HTML(x)
-        default.style <- htmltools::htmlDependency("pmxpartab", "1.0",
-            src=system.file(package="pmxpartab", "pmxpartab_defaults_1.0"),
-            stylesheet="pmxpartab_defaults.css")
-        z <- htmltools::div(class="Rpmxpartab", default.style, z)
-        knitr::knit_print(z, ...)
-    } else {
-        knitr::knit_print(as.character(x), ...)
-    }
-}
 
 #' Parse a parameter description string
 #'

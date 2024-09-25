@@ -1,13 +1,13 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pmxpartab
+# pmxpartab (`flextable` version)
 
 <!-- badges: start -->
 <!-- [![experimental](https://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges) -->
 <!-- [![R-CMD-check](https://github.com/benjaminrich/pmxpartab/workflows/R-CMD-check/badge.svg)](https://github.com/benjaminrich/pmxpartab/actions) -->
 
-[![CRAN\_Release\_Badge](https://www.r-pkg.org/badges/version-ago/pmxpartab)](https://CRAN.R-project.org/package=pmxpartab)
+[![CRAN_Release_Badge](https://www.r-pkg.org/badges/version-ago/pmxpartab)](https://CRAN.R-project.org/package=pmxpartab)
 <!-- [![CRAN\_Download\_Badge](https://cranlogs.r-pkg.org/badges/pmxpartab)](https://CRAN.R-project.org/package=pmxpartab) -->
 
 <!-- badges: end -->
@@ -113,22 +113,22 @@ parameters:
 
 parframe <- pmxparframe(outputs, meta)
 parframe
-#>    name               label units            type    trans fixed      est
-#> 1    CL           Clearance   L/h      Structural     <NA> FALSE 0.482334
-#> 2    VC              Volume     L      Structural      exp FALSE 1.061060
-#> 3 CL_WT Weight on Clearance  <NA> CovariateEffect     <NA>  TRUE 0.750000
-#> 4 VC_WT    Weight on Volume  <NA> CovariateEffect     <NA>  TRUE 1.000000
-#> 5   nCL        On Clearance  <NA>             IIV SD (CV%) FALSE 0.315414
-#> 6   nVC           On Volume  <NA>             IIV SD (CV%) FALSE 0.536025
-#> 7  ERRP  Proportional Error     %             RUV        % FALSE 5.084970
-#>            se       rse     lci95     uci95         pval shrinkage
-#> 1 0.013864600  2.874481 0.4551594 0.5095086 0.000000e+00        NA
-#> 2 0.005890157  0.555120 1.0495781 1.0726679 0.000000e+00        NA
-#> 3          NA        NA        NA        NA           NA        NA
-#> 4          NA        NA        NA        NA           NA        NA
-#> 5 0.018889100  5.988669 0.2783914 0.3524366 0.000000e+00   9.54556
-#> 6 0.090035200 16.796829 0.3595560 0.7124940 2.624601e-09  47.87710
-#> 7 0.182850000  3.595891 4.7265840 5.4433560 0.000000e+00        NA
+#>    name               label units            type    trans fixed      est          se       rse     lci95
+#> 1    CL           Clearance   L/h      Structural     <NA> FALSE 0.482334 0.013864600  2.874481 0.4551594
+#> 2    VC              Volume     L      Structural      exp FALSE 1.061060 0.005890157  0.555120 1.0495781
+#> 3 CL_WT Weight on Clearance  <NA> CovariateEffect     <NA>  TRUE 0.750000          NA        NA        NA
+#> 4 VC_WT    Weight on Volume  <NA> CovariateEffect     <NA>  TRUE 1.000000          NA        NA        NA
+#> 5   nCL        On Clearance  <NA>             IIV SD (CV%) FALSE 0.315414 0.018889100  5.988669 0.2783914
+#> 6   nVC           On Volume  <NA>             IIV SD (CV%) FALSE 0.536025 0.090035200 16.796829 0.3595560
+#> 7  ERRP  Proportional Error     %             RUV        % FALSE 5.084970 0.182850000  3.595891 4.7265840
+#>       uci95         pval shrinkage
+#> 1 0.5095086 0.000000e+00        NA
+#> 2 1.0726679 0.000000e+00        NA
+#> 3        NA           NA        NA
+#> 4        NA           NA        NA
+#> 5 0.3524366 0.000000e+00   9.54556
+#> 6 0.7124940 2.624601e-09  47.87710
+#> 7 5.4433560 0.000000e+00        NA
 ```
 
 ``` r
@@ -137,8 +137,12 @@ pmxpartab(parframe)
 
 Which produces:
 
-![Example result: parameter
-table](tools/readme/pmxpartab-example-output.png)
+<figure>
+<img src="tools/readme/pmxpartab-example-output.png"
+alt="Example result: parameter table" />
+<figcaption aria-hidden="true">Example result: parameter
+table</figcaption>
+</figure>
 
 For more information, read the
 [vignette](https://benjaminrich.github.io/pmxpartab/vignettes/pmxpartab-vignette.html).

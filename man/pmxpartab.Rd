@@ -6,8 +6,7 @@
 \usage{
 pmxpartab(
   parframe,
-  columns = c(est = "Estimate", rse = "RSE\%", ci95 = "95\% CI", shrinkage =
-    "Shrinkage"),
+  columns = c(est = "Estimate", rse = "RSE\%", ci95 = "95\% CI", shrinkage = "Shrinkage"),
   sections = !is.null(parframe$type),
   section.labels = c(Structural = "Typical Values", CovariateEffect =
     "Covariate Effects", RUV = "Residual Error", IIV = "Between Subject Variability", IOV
@@ -52,9 +51,7 @@ missing or non-applicable values.}
 table.}
 }
 \value{
-An object of class \code{"pmxpartab"}. This is essentially just an HTML
-character string that displays in the default web browser or viewer when
-printed (as per \code{\link[htmltools:print.html]{htmltools::print.html()}}).
+An object of class \code{"flextable"}.
 }
 \description{
 Generate an formatted HTML table of parameter estimates
